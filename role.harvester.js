@@ -11,7 +11,7 @@ module.exports = {
         if (!creep.pos.inRangeTo(source, 1)) DX.CreepMove(creep, source);
         else creep.harvest(source);
         if (creep.store.getFreeCapacity() == 0) {
-            const roomContainers = creep.room.find(FIND_STRUCTURES, { filter: (i) => i.structureType == STRUCTURE_CONTAINER });
+            const roomContainers = creep.room.find(FIND_MY_STRUCTURES, { filter: (i) => i.structureType == STRUCTURE_CONTAINER });
             if (roomContainers) {
                 target = creep.pos.findClosestByRange(roomContainers);
                 if (target && creep.pos.inRangeTo(target, 3)) {
