@@ -1,18 +1,23 @@
 module.exports = {
-    run: function (spawningText, totalCost, creepsCount) {
-        for (var roomSpawns in Game.spawns) {
-            var roomName = Game.spawns[roomSpawns].room.name;
-            var x = 3
-            var y = 3
+    run: function () {
+        for (var name in Game.spawns) {
+            var roomName = Game.spawns[name].room.name;
+            var x = 2,y = 2;
             var spawningCreep = [];
             spawningCreep.name = "NOTHING";
-            var textFormat = {align: 'left', color: "#000000", font: 'bold 0.5 Arial', backgroundPadding: 0.2, backgroundColor: '#ffffff',opacity: 0.9};
-            var roomPower = roomName + ":" + Game.spawns[roomSpawns].room.energyAvailable + "/" + Game.spawns[roomSpawns].room.energyCapacityAvailable;
-            if (Game.spawns[roomSpawns].spawning) var spawningCreep = Game.creeps[Game.spawns[roomSpawns].spawning.name];
-            Game.spawns[roomSpawns].room.visual.text(roomPower, x, y, textFormat);
-            Game.spawns[roomSpawns].room.visual.text(creepsCount, x, y + 1, textFormat);
-            Game.spawns[roomSpawns].room.visual.text(spawningText + " -- Cost: " + totalCost + " HAVE: " +Game.spawns[roomSpawns].room.energyAvailable, x, y + 2, textFormat);
-            Game.spawns[roomSpawns].room.visual.text("Now Spawning: " + spawningCreep.name, x, y + 3, textFormat);
+            var roomCreepCount = _.countBy(Game.spawns[name].room.find(FIND_MY_CREEPS), 'memory.role');
+            var roomCreepText = '';
+            for (const property in roomCreepCount) {
+                var i = `${property}: ${roomCreepCount[property]}`
+                roomCreepText = roomCreepText.concat(" "+i)
+            }
+            var textFormat = { align: 'left', color: "#ffffff", font: 'bold 0.9 Arial', backgroundPadding: 0.2, backgroundColor: '#000000', opacity: 0.9 };
+            var roomPower = Game.spawns[name].room.energyAvailable + "/" + Game.spawns[name].room.energyCapacityAvailable;
+            if (Game.spawns[name].spawning) var spawningCreep = Game.creeps[Game.spawns[name].spawning.name];
+            Game.spawns[name].room.visual.text(roomName + " ="+ roomCreepText.toUpperCase(), x, y, textFormat);
+            Game.spawns[name].room.visual.text("COST: " + Game.spawns[name].room.memory.cost + " | HAVE: " + roomPower, x, y + 2, textFormat);
+            Game.spawns[name].room.visual.text("QUEUED: " + Game.spawns[name].room.memory.queued, x, y + 3, textFormat);
+            Game.spawns[name].room.visual.text("Now Spawning: " + spawningCreep.name, x, y + 4, textFormat);
         }
 
     }

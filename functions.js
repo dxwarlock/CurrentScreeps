@@ -20,7 +20,7 @@ module.exports = {
             var target;
             if (!creep.memory.target) {
                 const roomContainers = creep.room.find(FIND_STRUCTURES, { filter: (i) => i.structureType == STRUCTURE_CONTAINER && i.store[RESOURCE_ENERGY] > 0 });
-                var droppedtargets = creep.room.find(FIND_DROPPED_RESOURCES, { filter: (r) => r.resourceType == RESOURCE_ENERGY && r.amount >= 250 });
+                var droppedtargets = creep.room.find(FIND_DROPPED_RESOURCES, { filter: (r) => r.resourceType == RESOURCE_ENERGY && r.amount >= creep.room.memory.dropped});
                 if (droppedtargets.length > 0) creep.memory.target = droppedtargets[_.random(0, droppedtargets.length - 1)];
                 else if (roomContainers) {
                     target = _.sortBy(roomContainers, "energy");
@@ -29,8 +29,8 @@ module.exports = {
             }
             else if (creep.memory.target) {
                 target = Game.getObjectById(creep.memory.target.id);
-                //creep.say("C:🢁");
-                if (target == null) {
+                creep.say("C:🢁");
+                if (target == null || (creep.memory.target.structureType == STRUCTURE_CONTAINER && creep.memory.target.store[RESOURCE_ENERGY] == 0 )) {
                     creep.say("LOST");
                     delete creep.memory.target;
                     return;
@@ -58,7 +58,7 @@ module.exports = {
         else DX.CreepMove(creep, Game.flags.Helpers);
         target = creep.pos.findClosestByRange(target);
         if (target) {
-            //creep.say("C:🢃");
+            creep.say("C:🢃");
             DX.CreepMark(creep, target, "#ff0000");
             if (creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) DX.CreepMove(creep, target);
         }
@@ -152,11 +152,12 @@ module.exports = {
         for (var i in spawn.room.memory.creepSpecs[role]) {
             var Part = spawn.room.memory.creepSpecs[role][i];
             if (Part == MOVE) totalCost += 50;
-            else if (Part == WORK) totalCost += 100;
-            else if (Part == CARRY) totalCost += 50;
-            else if (Part == ATTACK) totalCost += 80;
-            else if (Part == RANGED_ATTACK) totalCost += 150;
+            else if (Part == CLAIM) totalCost += 600;
             else if (Part == HEAL) totalCost += 250;
+            else if (Part == RANGED_ATTACK) totalCost += 150;
+            else if (Part == WORK) totalCost += 100;
+            else if (Part == ATTACK) totalCost += 80;
+            else if (Part == CARRY) totalCost += 50;
             else if (Part == TOUGH) totalCost += 10;
         }
         return totalCost;

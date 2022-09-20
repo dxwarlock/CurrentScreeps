@@ -1,5 +1,6 @@
 module.exports = {
     run: function (creep) {
+        var roomname = creep.room.name + "-Builders";
         var repairs;
         if (Game.time % 2 == 0) {
             repairs = DX.FindRepairs(creep);
@@ -17,8 +18,9 @@ module.exports = {
             target = creep.memory.toRepair;
             if (target.hits < target.hitsMax) {
                 DX.CreepMark(creep, target, "#ff00ff");
-                target = Game.getObjectById(target.id)
-                if (creep.repair(target) == ERR_NOT_IN_RANGE) DX.CreepMove(creep, target)
+                target = Game.getObjectById(target.id);
+                creep.say('R')
+                if (creep.repair(target) == ERR_NOT_IN_RANGE || creep.repair(target) == ERR_NOT_ENOUGH_RESOURCES) DX.CreepMove(creep, target)
             }
             else {
                 creep.memory.repairing = false;
@@ -27,9 +29,10 @@ module.exports = {
         else if (toBuild.length != 0) {
             {
                 target = creep.pos.findClosestByRange(toBuild);
-                if (creep.build(target) == ERR_NOT_IN_RANGE) DX.CreepMove(creep, target)
+                if (creep.build(target) == ERR_NOT_IN_RANGE || creep.build(target) == ERR_NOT_ENOUGH_RESOURCES) DX.CreepMove(creep, target)
             }
         }
-        else DX.CreepMove(creep, Game.flags.Builders);
+
+        else DX.CreepMove(creep, Game.flags[roomname]);
     }
 };
