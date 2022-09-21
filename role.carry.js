@@ -1,6 +1,7 @@
 module.exports = {
-    run: function (creep) {
-        DX.SetHarv(creep);
-        DX.pickupEnergy(creep);
-    }
+	run: function (creep) {
+		//creep.say("📣");
+		DX.SetHarv(creep);
+		DX.pickupEnergy(creep);
+	}
 };

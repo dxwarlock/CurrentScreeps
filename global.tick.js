@@ -17,6 +17,7 @@ module.exports = {
     	roletowers.run();
         for (var name in Game.creeps) {
             var creep = Game.creeps[name];
+            //creep.suicide();
             if (creep.ticksToLive < 50) creep.say('DYING!')
             if (creep.memory.role == 'harvester') roleharvester.run(creep);
             if (creep.memory.role == 'upgrader') roleupgrader.run(creep);

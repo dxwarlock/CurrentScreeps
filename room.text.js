@@ -2,7 +2,7 @@ module.exports = {
     run: function () {
         for (var name in Game.spawns) {
             var roomName = Game.spawns[name].room.name;
-            var x = 2,y = 2;
+            var x = 1,y = 1;
             var spawningCreep = [];
             spawningCreep.name = "NOTHING";
             var roomCreepCount = _.countBy(Game.spawns[name].room.find(FIND_MY_CREEPS), 'memory.role');

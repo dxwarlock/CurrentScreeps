@@ -1,5 +1,6 @@
 module.exports = {
     run: function (creep) {
+        //creep.say("📣");
         var roomname = creep.room.name + "-Builders";
         var repairs;
         if (Game.time % 2 == 0) {

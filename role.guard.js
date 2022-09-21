@@ -1,5 +1,6 @@
 module.exports = {
     run: function (creep) {
+        //creep.say("📣");
         var targets = creep.room.find(FIND_HOSTILE_CREEPS, 20);
         if (targets.length == 0) targets = creep.room.find(FIND_HOSTILE_STRUCTURES);
         if (targets.length > 0 && targets[0].owner.username != "REBRANDED") {

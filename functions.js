@@ -19,17 +19,17 @@ module.exports = {
         if (creep.memory.harv == 1) {
             var target;
             if (!creep.memory.target) {
-                const roomContainers = creep.room.find(FIND_MY_STRUCTURES, { filter: (i) => i.structureType == STRUCTURE_CONTAINER && i.store[RESOURCE_ENERGY] > 0 });
+                const roomContainers = creep.room.find(FIND_STRUCTURES, { filter: (i) => i.structureType == STRUCTURE_CONTAINER && i.store[RESOURCE_ENERGY] > 0 });
                 var droppedtargets = creep.room.find(FIND_DROPPED_RESOURCES, { filter: (r) => r.resourceType == RESOURCE_ENERGY && r.amount >= creep.room.memory.dropped });
                 if (droppedtargets.length > 0) creep.memory.target = droppedtargets[_.random(0, droppedtargets.length - 1)];
-                else if (roomContainers) {
+                else if (roomContainers.length != 0) {
                     target = _.sortBy(roomContainers, "energy");
                     creep.memory.target = target[0];
                 }
             }
             else if (creep.memory.target) {
                 target = Game.getObjectById(creep.memory.target.id);
-                if (target == null || (creep.memory.target.structureType == STRUCTURE_CONTAINER && creep.memory.target.store[RESOURCE_ENERGY] == 0)) {
+                if (target == null || (target.structureType == STRUCTURE_CONTAINER && target.store[RESOURCE_ENERGY] == 0)) {
                     creep.say("LOST");
                     delete creep.memory.target;
                     return;
@@ -47,6 +47,7 @@ module.exports = {
     },
     storeEnergy: function storeEnergy(creep) {
         var target;
+        var roomname = creep.room.name + "-Carry";
         const roomSpawn = creep.room.find(FIND_MY_STRUCTURES, { filter: (i) => i.room == creep.room && i.structureType == STRUCTURE_SPAWN && i.store.getFreeCapacity(RESOURCE_ENERGY) > 0 });
         const roomExt = creep.room.find(FIND_MY_STRUCTURES, { filter: (i) => i.room == creep.room && i.structureType == STRUCTURE_EXTENSION && i.store.getFreeCapacity(RESOURCE_ENERGY) > 0 });
         const roomStorage = creep.room.find(FIND_MY_STRUCTURES, { filter: (i) => i.room == creep.room && i.structureType == STRUCTURE_STORAGE && i.store.getFreeCapacity(RESOURCE_ENERGY) > 0 });
@@ -55,7 +56,7 @@ module.exports = {
         else if (roomExt.length) target = roomExt;
         else if (roomTowers.length) target = roomTowers;
         else if (roomStorage.length) target = roomStorage;
-        else DX.CreepMove(creep, Game.flags.Helpers);
+        else DX.CreepMove(creep, Game.flags[roomname]);
         target = creep.pos.findClosestByRange(target);
         if (target) {
             DX.CreepMark(creep, target, "#ff0000");
@@ -65,12 +66,14 @@ module.exports = {
     },
     //HELPER FUNCTIONS--------------------
     getEnergy: function getEnergy(creep) {
+        var roomname = creep.room.name + "-Helper";
         if (creep.room.memory.isSpawning != "NOTHING") {
             creep.say("🛑");
+            DX.CreepMove(creep, Game.flags[roomname]);
             return;
         }
         var target;
-        const roomContainers = creep.room.find(FIND_MY_STRUCTURES, { filter: (i) => i.room == creep.room && i.structureType == STRUCTURE_CONTAINER && i.store.getFreeCapacity(RESOURCE_ENERGY) < 0 });
+        const roomContainers = creep.room.find(FIND_STRUCTURES, { filter: (i) => i.room == creep.room && i.structureType == STRUCTURE_CONTAINER && i.store.getFreeCapacity(RESOURCE_ENERGY) < 0 });
         const roomStorage = creep.room.find(FIND_MY_STRUCTURES, { filter: (i) => i.room == creep.room && i.structureType == STRUCTURE_STORAGE && i.store[RESOURCE_ENERGY] > 0 });
         const roomExt = creep.room.find(FIND_MY_STRUCTURES, { filter: (i) => i.room == creep.room && i.structureType == STRUCTURE_EXTENSION && i.store[RESOURCE_ENERGY] > 0 });
         const roomSpawn = creep.room.find(FIND_MY_STRUCTURES, { filter: (i) => i.room == creep.room && i.structureType == STRUCTURE_SPAWN && i.store[RESOURCE_ENERGY] > 0 });
@@ -86,6 +89,7 @@ module.exports = {
     },
 
     GiveEnergy: function GiveEnergy(creep) {
+        var roomname = creep.room.name + "-Helper";
         let foundUpgraderCreeps = creep.room.find(FIND_MY_CREEPS, {
             filter: (creep) => {
                 return ((creep.memory.role === 'upgrader') && creep.store.energy <= 30);
@@ -106,6 +110,7 @@ module.exports = {
             if (creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) DX.CreepMove(creep, target);
             creep.say("H:🢃");
         }
+        else DX.CreepMove(creep, Game.flags[roomname]);
     },
     //MINING FUNCTIONS########################################################################################################
     getOpenSource: function getOpenSource(creep) {
@@ -144,7 +149,7 @@ module.exports = {
         return obj[key];
     },
     FindRepairs: function FindRepairs(creep) {
-        var repairs = creep.room.find(FIND_MY_STRUCTURES, { filter: (i) => i.structureType && i.hits < i.hitsMax / 2 });
+        var repairs = creep.room.find(FIND_STRUCTURES, { filter: (i) => i.structureType && i.hits < i.hitsMax / 2 });
         var repairs = _.sortBy(repairs, "hits" / "HitsMax");
         return repairs;
     },

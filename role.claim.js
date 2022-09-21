@@ -1,5 +1,6 @@
 module.exports = {
     run: function (creep) {
+        //creep.say("📣");
         creep.moveTo(Game.flags.Claim);
         return;
         if (creep.room != Game.flags.Claim.room) creep.moveTo(Game.flags.Claim);
