@@ -15,8 +15,10 @@ module.exports = {
         var roomspawning = require('room.spawning');
         roomspawning.SpawnStuff();
     	roletowers.run();
+    	var textFormat = { align: 'center', color: "#ffffff", font: 'bold 0.4 Arial', stroke: '#000000', backgroundPadding: 0.2, backgroundColor: 'transparent', opacity: 0.6};
         for (var name in Game.creeps) {
             var creep = Game.creeps[name];
+            //creep.room.visual.text(creep.memory.role, creep.pos.x, creep.pos.y-0.5, textFormat);
             //creep.suicide();
             if (creep.ticksToLive < 50) creep.say('DYING!')
             if (creep.memory.role == 'harvester') roleharvester.run(creep);

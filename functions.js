@@ -2,7 +2,7 @@
 module.exports = {
     CreepMove: function creepMove(creep, target) {
         var pColor = creep.memory.role
-        creep.moveTo(target, { reusePath: 8, visualizePathStyle: { stroke: Memory.pathcolor[pColor], strokeWidth: .1, opacity: 0.7 } })
+        creep.moveTo(target, { reusePath: 8, visualizePathStyle: { stroke: Memory.pathcolor[pColor], strokeWidth: 0.05, opacity: 0.7 } })
     },
     CreepMark: function creepMark(creep, target, color) {
         creep.room.visual.text("HERE", target.pos.x, target.pos.y, {
@@ -23,7 +23,10 @@ module.exports = {
                 var droppedtargets = creep.room.find(FIND_DROPPED_RESOURCES, { filter: (r) => r.resourceType == RESOURCE_ENERGY && r.amount >= creep.room.memory.dropped });
                 if (droppedtargets.length > 0) creep.memory.target = droppedtargets[_.random(0, droppedtargets.length - 1)];
                 else if (roomContainers.length != 0) {
-                    target = _.sortBy(roomContainers, "energy");
+                    target = _.sortBy(roomContainers, "energy").reverse();
+                    for(var i in target) {
+                        //DX.JSONs(target[i].store)
+                    }                    
                     creep.memory.target = target[0];
                 }
             }
@@ -36,7 +39,7 @@ module.exports = {
                 }
                 else if (creep.pickup(target) == ERR_NOT_IN_RANGE) DX.CreepMove(creep, target);
                 else if (creep.withdraw(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) DX.CreepMove(creep, target);
-                creep.say("C:🢁");
+                //creep.say("C:🢁");
             }
         }
         //----------------
@@ -61,7 +64,7 @@ module.exports = {
         if (target) {
             DX.CreepMark(creep, target, "#ff0000");
             if (creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) DX.CreepMove(creep, target);
-            creep.say("C:🢃");
+            //creep.say("C:🢃");
         }
     },
     //HELPER FUNCTIONS--------------------
@@ -92,19 +95,20 @@ module.exports = {
         var roomname = creep.room.name + "-Helper";
         let foundUpgraderCreeps = creep.room.find(FIND_MY_CREEPS, {
             filter: (creep) => {
-                return ((creep.memory.role === 'upgrader') && creep.store.energy <= 30);
+                return ((creep.memory.role === 'upgrader') && creep.store.energy <= 50);
             }
         });
         let foundBuilderCreeps = creep.room.find(FIND_MY_CREEPS, {
             filter: (creep) => {
-                return ((creep.memory.role === 'builder') && creep.store.energy <= 30);
+                return ((creep.memory.role === 'builder') && creep.store.energy <= 50);
             }
         });
         var target;
-        foundBuilderCreeps = _.sortBy(foundBuilderCreeps, s => s.store.energy);
-        foundUpgraderCreeps = _.sortBy(foundUpgraderCreeps, s => s.store.energy);
-        if (foundBuilderCreeps.length != 0) target = foundBuilderCreeps[0];
-        else if (foundUpgraderCreeps.length != 0) target = foundUpgraderCreeps[0];
+        foundBuilderCreeps = _.sortBy(foundBuilderCreeps, s => s.store.energy).reverse();
+        foundUpgraderCreeps = _.sortBy(foundUpgraderCreeps, s => s.store.energy).reverse();
+        var builds = creep.room.find(FIND_CONSTRUCTION_SITES);
+        if (foundBuilderCreeps.length != 0) target = foundBuilderCreeps[0];        
+        else if (builds.length == 0 && foundUpgraderCreeps.length != 0) target = foundUpgraderCreeps[0];
         if (target) {
             DX.CreepMark(creep, target, "#00ff00");
             if (creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) DX.CreepMove(creep, target);

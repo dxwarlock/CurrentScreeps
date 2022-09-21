@@ -11,7 +11,7 @@ module.exports = {
                 var i = `${property}: ${roomCreepCount[property]}`
                 roomCreepText = roomCreepText.concat(" "+i)
             }
-            var textFormat = { align: 'left', color: "#ffffff", font: 'bold 0.9 Arial', backgroundPadding: 0.2, backgroundColor: '#000000', opacity: 0.9 };
+            var textFormat = { align: 'left', color: "#ffffff", font: 'bold 0.9 Arial', stroke: '#000000', backgroundPadding: 0.2, backgroundColor: '#223300', opacity: 0.9};
             var roomPower = Game.spawns[name].room.energyAvailable + "/" + Game.spawns[name].room.energyCapacityAvailable;
             if (Game.spawns[name].spawning) var spawningCreep = Game.creeps[Game.spawns[name].spawning.name];
             Game.spawns[name].room.visual.text(roomName + " ="+ roomCreepText.toUpperCase(), x, y, textFormat);

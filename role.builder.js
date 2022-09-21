@@ -29,7 +29,9 @@ module.exports = {
         }
         else if (toBuild.length != 0) {
             {
-                target = creep.pos.findClosestByRange(toBuild);
+                //target = creep.pos.findClosestByRange(toBuild);
+                target = _.sortBy(toBuild, s => s.hits);
+                target = target [0];
                 if (creep.build(target) == ERR_NOT_IN_RANGE || creep.build(target) == ERR_NOT_ENOUGH_RESOURCES) DX.CreepMove(creep, target)
             }
         }

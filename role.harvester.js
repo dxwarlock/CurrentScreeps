@@ -12,7 +12,7 @@ module.exports = {
                     }
                     else {
                         creep.say("🛑");
-                        creep.drop(RESOURCE_ENERGY);
+                        //creep.drop(RESOURCE_ENERGY);
                     }
                 }
             }
