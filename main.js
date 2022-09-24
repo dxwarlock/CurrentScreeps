@@ -15,5 +15,5 @@ global.DX = require('functions');
 var globaltick = require('global.tick');
 //#####################
 module.exports.loop = function () {
-		globaltick.everyTick();
+	globaltick.everyTick();
 }

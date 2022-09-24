@@ -6,8 +6,7 @@ module.exports = {
             if (roomContainers.length != 0) {
                 target = creep.pos.findClosestByRange(roomContainers);
                 if ((target || target != null && creep.pos.inRangeTo(target, 3))) {
-                    if (creep.pos.inRangeTo(target, 3) && target.store.energy != 2000) {
-                        creep.transfer(target, RESOURCE_ENERGY)
+                    if (target.store[RESOURCE_ENERGY] != 2000) {
                         if (creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) DX.CreepMove(creep, target);
                     }
                     else {

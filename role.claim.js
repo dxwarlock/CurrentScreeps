@@ -2,7 +2,6 @@ module.exports = {
     run: function (creep) {
         //creep.say("📣");
         creep.moveTo(Game.flags.Claim);
-        return;
         if (creep.room != Game.flags.Claim.room) creep.moveTo(Game.flags.Claim);
         else if (creep.claimController(creep.room.controller) == ERR_NOT_IN_RANGE) DX.CreepMove(creep, creep.room.controller);
         else {

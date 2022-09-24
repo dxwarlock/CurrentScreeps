@@ -1,23 +1,18 @@
 module.exports = {
     run: function (creep) {
-        //creep.say("📣");
-        var targets = creep.room.find(FIND_HOSTILE_CREEPS, 20);
-        if (targets.length == 0) targets = creep.room.find(FIND_HOSTILE_STRUCTURES);
-        if (targets.length > 0 && targets[0].owner.username != "REBRANDED") {
-            var target = creep.pos.findClosestByRange(targets);
-            if (creep.attack(target) == ERR_NOT_IN_RANGE) creep.moveTo(target);
-            creep.room.visual.text("HERE " + target.hits + "/" + target.hitsMax, target.pos.x, target.pos.y, {
-                align: 'center',
-                font: 'bold italic 0.3 Arial',
-                backgroundPadding: 0.1,
-                backgroundColor: "#ff0000",
-                stroke: "#000000",
-                opacity: 0.7
-            });
+        const target = creep.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
+        if (target) {
+            if (creep.attack(target) == ERR_NOT_IN_RANGE) {
+                DX.CreepMove(creep, target);
+            }
         }
         else {
-            var target = Game.flags.Guard;
+            var flag1 = Game.flags.Defend1;
+            var flag2 = Game.flags.Defend2;
+            if (!creep.memory.flag) creep.memory.flag = flag1
+            if (creep.pos.inRangeTo(creep.memory.flag.pos.x, creep.memory.flag.pos.y, 1)) creep.memory.flag = flag2;
+            if (creep.pos.inRangeTo(creep.memory.flag.pos.x, creep.memory.flag.pos.y, 1)) creep.memory.flag = flag1;
+            DX.CreepMove(creep, new RoomPosition(creep.memory.flag.pos.x, creep.memory.flag.pos.y, creep.memory.flag.room.name));
         }
-        DX.CreepMove(creep, target);
     }
 };

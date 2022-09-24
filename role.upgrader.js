@@ -4,7 +4,9 @@ module.exports = {
         creep.signController(creep.room.controller, "My Room!")
         if (creep.pos.getRangeTo(creep.room.controller) > 1) {
             DX.CreepMove(creep, creep.room.controller);
+            DX.ShareEnergy(creep);
         }
-        else creep.upgradeController(creep.room.controller)
+        else creep.upgradeController(creep.room.controller);
+
     }
 };

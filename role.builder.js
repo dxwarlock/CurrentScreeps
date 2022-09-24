@@ -1,12 +1,6 @@
 module.exports = {
     run: function (creep) {
-        //creep.say("📣");
         var roomname = creep.room.name + "-Builders";
-        var repairs;
-        if (Game.time % 2 == 0) {
-            repairs = DX.FindRepairs(creep);
-            if (repairs != undefined) creep.room.memory.Repairables = repairs;
-        }
         var toBuild = creep.room.find(FIND_CONSTRUCTION_SITES);
         //###################################
         if (creep.room.memory.Repairables.length != 0) {
@@ -16,26 +10,27 @@ module.exports = {
         else creep.memory.repairing = false;
         //###################################
         if (creep.memory.repairing == true) {
+            creep.say('👷')
             target = creep.memory.toRepair;
             if (target.hits < target.hitsMax) {
-                DX.CreepMark(creep, target, "#ff00ff");
+                DX.CreepMark(creep, target, "#ff00ff", "REPAIR");
                 target = Game.getObjectById(target.id);
-                creep.say('R')
-                if (creep.repair(target) == ERR_NOT_IN_RANGE || creep.repair(target) == ERR_NOT_ENOUGH_RESOURCES) DX.CreepMove(creep, target)
+                if (creep.repair(target) == ERR_NOT_IN_RANGE) DX.CreepMove(creep, target);
             }
-            else {
-                creep.memory.repairing = false;
-            }
+            else creep.memory.repairing = false;
         }
         else if (toBuild.length != 0) {
-            {
-                //target = creep.pos.findClosestByRange(toBuild);
-                target = _.sortBy(toBuild, s => s.hits);
-                target = target [0];
-                if (creep.build(target) == ERR_NOT_IN_RANGE || creep.build(target) == ERR_NOT_ENOUGH_RESOURCES) DX.CreepMove(creep, target)
+            //creep.say('🏗️')
+            targets = _.sortBy(toBuild, s => s.progressTotal);
+            target = targets[0];
+            if (target != undefined) {
+                DX.CreepMark(creep, target, "#ff00ff", "BUILD " + target.progress + "/" + target.progressTotal);
+                if (creep.build(target) == ERR_NOT_IN_RANGE) DX.CreepMove(creep, target);
+                DX.ShareEnergy(creep);
             }
         }
-
-        else DX.CreepMove(creep, Game.flags[roomname]);
+        else {
+            DX.CreepMove(creep, Game.flags[roomname]);
+        }
     }
 };
