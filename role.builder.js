@@ -18,7 +18,7 @@ module.exports = {
             }
             else creep.memory.repairing = false;
         }
-        else if (creep.room.memory.ToBuild.length != 0 || creep.room.memory.ToBuild.length != undefined) {
+        else if (creep.room.memory.ToBuild.length != 0) {
             targets = creep.room.memory.ToBuild
             target = targets[0];
             if (target != undefined) {

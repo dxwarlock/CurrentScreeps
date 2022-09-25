@@ -16,6 +16,7 @@ module.exports = {
     },
     //CARRY ENERGY FUNCTIONS########################################################################################################
     pickupEnergy: function pickupEnergy(creep) {
+        var roomname = creep.room.name + "-Carry";
         if (creep.memory.harv == 1) {
             var target;
             if (!creep.memory.target) this.findEnergy(creep);
@@ -25,6 +26,7 @@ module.exports = {
                     //delete creep.memory.target;
                     //creep.say("LOST");
                     this.findEnergy(creep);
+                     DX.CreepMove(creep, Game.flags[roomname]);
                 }
                 else if (creep.pickup(target) == ERR_NOT_IN_RANGE) DX.CreepMove(creep, target);
                 else if (creep.withdraw(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) DX.CreepMove(creep, target);
