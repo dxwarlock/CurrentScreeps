@@ -14,7 +14,7 @@ module.exports = {
             opacity: 0.9
         });
     },
-    //ENERGY FUNCTIONS########################################################################################################
+    //CARRY ENERGY FUNCTIONS########################################################################################################
     pickupEnergy: function pickupEnergy(creep) {
         if (creep.memory.harv == 1) {
             var target;
@@ -62,7 +62,7 @@ module.exports = {
             if (creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) DX.CreepMove(creep, target);
         }
     },
-    //HELPER FUNCTIONS-------------------------------------------------------------
+    //HELPER ENERGY FUNCTIONS########################################################################################################
     getEnergy: function getEnergy(creep) {
         var roomname = creep.room.name + "-Helper";
         if (creep.room.memory.isSpawning != "NOTHING") {
@@ -152,17 +152,35 @@ module.exports = {
         if (creep.store[RESOURCE_ENERGY] == 0) creep.memory.harv = 1;
         if (creep.store.getFreeCapacity() == 0) creep.memory.harv = 0;
     },
-    //OTHER FUNCTIONS########################################################################################################
-    JSONs: function JSONs(string) {
-        console.log(JSON.stringify(string));
+    MineEnergy: function MineEnergy(creep){
+        if (creep.store.getFreeCapacity() == 0) {
+            const roomContainers = creep.room.find(FIND_STRUCTURES, { filter: (i) => i.structureType == STRUCTURE_CONTAINER && creep.pos.inRangeTo(i, 3)});
+            if (roomContainers.length != 0) {
+                target = creep.pos.findClosestByRange(roomContainers);
+                if ((target || target != null)) {
+                    if (target.store[RESOURCE_ENERGY] != 2000) {
+                        if (creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) DX.CreepMove(creep, target);
+                    }
+                    else {
+                        creep.say("🛑");
+                        return;
+                    }
+                }
+            }
+            else if (roomContainers.length == 0) creep.drop(RESOURCE_ENERGY);
+        }
+        var source = Game.getObjectById(creep.memory.source);
+        if (source == null) {
+            var source = DX.getOpenSource(creep);
+            if (!source) return;
+            DX.setSourceToMine(source, creep);
+        }
+        if (Memory.sources[source.id] == undefined) Memory.sources[source.id] = { id: source.id };
+        Memory.sources[source.id].miner = creep.id;
+        if (!creep.pos.inRangeTo(source, 1)) DX.CreepMove(creep, source);
+        else creep.harvest(source);
     },
-    randomValueOf: function randomValueOf(obj) {
-        var keys = Object.keys(obj);
-        var len = keys.length;
-        var rnd = Math.floor(Math.random() * len);
-        var key = keys[rnd];
-        return obj[key];
-    },
+    //BUILDER FUNCTIONS########################################################################################################
     FindRepairs: function FindRepairs(spawn) {
         var repairs = spawn.room.find(FIND_STRUCTURES, { filter: (i) => i.hits < i.hitsMax / 2 });
         var repairs = _.sortBy(repairs, s => s.hits);
@@ -174,9 +192,23 @@ module.exports = {
     FindBuilds: function FindBuilds(spawn) {
         var builds = [];
         var builds = spawn.room.find(FIND_CONSTRUCTION_SITES);
-        builds = _.sortBy(builds, s => s.progressTotal);
-        spawn.room.memory.ToBuild = builds;
+        if (builds.length) {
+            builds = _.sortBy(builds, s => s.progressTotal).reverse();
+            spawn.room.memory.ToBuild = builds;
+        }
     },
+    //OTHER FUNCTIONS########################################################################################################
+    JSONs: function JSONs(string) {
+        console.log(JSON.stringify(string));
+    },
+    randomValueOf: function randomValueOf(obj) {
+        var keys = Object.keys(obj);
+        var len = keys.length;
+        var rnd = Math.floor(Math.random() * len);
+        var key = keys[rnd];
+        return obj[key];
+    },
+
     FindCost: function FindCost(spawn, role) {
         var totalCost = 0;
         for (var i in spawn.room.memory.creepSpecs[role]) {
