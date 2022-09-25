@@ -12,11 +12,11 @@ module.exports = {
                 roomCreepText = roomCreepText.concat(" " + i)
             }
             var textFormat = { align: 'left', color: "#ffffff", font: 'bold 0.95 Arial', stroke: '#000000', backgroundPadding: 0.2, backgroundColor: '#223300', opacity: 0.9 };
-            var textFormat2 = { align: 'left', color: "#ffffff", font: 'bold 0.35 Arial', stroke: '#000000', backgroundPadding: 0.2, backgroundColor: 'transparent', opacity: 0.9 };
+            var textFormat2 = { align: 'left', color: "#ffffff", font: 'bold 0.5 Arial', stroke: '#000000', backgroundPadding: 0.2, backgroundColor: 'transparent', opacity: 0.9 };
             var roomPower = Game.spawns[name].room.energyAvailable + "/" + Game.spawns[name].room.energyCapacityAvailable;
             if (Game.spawns[name].spawning) var spawningCreep = Game.creeps[Game.spawns[name].spawning.name];
             //TOP TEXT
-            Game.spawns[name].room.visual.text(roomName + " =" + roomCreepText.toUpperCase(), x, y, textFormat);
+            Game.spawns[name].room.visual.text(roomName + " =" + roomCreepText.toUpperCase(), x, y, textFormat2);
             Game.spawns[name].room.visual.text("COST: " + Game.spawns[name].room.memory.cost + " | HAVE: " + roomPower, x, y + 2, textFormat);
             Game.spawns[name].room.visual.text("QUEUED: " + Game.spawns[name].room.memory.queued, x, y + 3, textFormat);
             Game.spawns[name].room.visual.text("Now Spawning: " + spawningCreep.name, x, y + 4, textFormat);
@@ -25,7 +25,7 @@ module.exports = {
             else if (Game.spawns[name].spawning != null) Game.spawns[name].room.visual.text(spawningCreep.name, Game.spawns[name].pos.x + 2, Game.spawns[name].pos.y, textFormat2);
             //CONTROLLER PROGRESS
             var controlProgress = (Game.spawns[name].room.controller.progress /+ Game.spawns[name].room.controller.progressTotal*100).toFixed(4) + "%";
-            Game.spawns[name].room.visual.text(controlProgress, Game.spawns[name].room.controller.pos.x-1, Game.spawns[name].room.controller.pos.y+1, textFormat2);
+            Game.spawns[name].room.visual.text(controlProgress, Game.spawns[name].room.controller.pos.x-1, Game.spawns[name].room.controller.pos.y+0, textFormat2);
         }
     }
 }

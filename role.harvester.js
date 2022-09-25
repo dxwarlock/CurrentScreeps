@@ -17,17 +17,15 @@ module.exports = {
             }
             else if (roomContainers.length == 0) creep.drop(RESOURCE_ENERGY);
         }
-        else {
-            var source = Game.getObjectById(creep.memory.source);
-            if (source == null) {
-                var source = DX.getOpenSource(creep);
-                if (!source) return;
-                DX.setSourceToMine(source, creep);
-            }
-            if (Memory.sources[source.id] == undefined) Memory.sources[source.id] = { id: source.id };
-            Memory.sources[source.id].miner = creep.id;
-            if (!creep.pos.inRangeTo(source, 1)) DX.CreepMove(creep, source);
-            else creep.harvest(source);
+        var source = Game.getObjectById(creep.memory.source);
+        if (source == null) {
+            var source = DX.getOpenSource(creep);
+            if (!source) return;
+            DX.setSourceToMine(source, creep);
         }
+        if (Memory.sources[source.id] == undefined) Memory.sources[source.id] = { id: source.id };
+        Memory.sources[source.id].miner = creep.id;
+        if (!creep.pos.inRangeTo(source, 1)) DX.CreepMove(creep, source);
+        else creep.harvest(source);
     }
 };

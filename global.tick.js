@@ -4,6 +4,7 @@ module.exports = {
             for (var name in Game.spawns) {
                 var spawn = Game.spawns[name];
                 DX.FindRepairs(spawn);
+                DX.FindBuilds(spawn);
             }
         }
         for (var i in Memory.flags) if (!Game.flags[i]) delete Memory.flags[i];

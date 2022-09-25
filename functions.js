@@ -15,15 +15,6 @@ module.exports = {
         });
     },
     //ENERGY FUNCTIONS########################################################################################################
-    findEnergy: function findEnergy(creep) {
-        const roomContainers = creep.room.find(FIND_STRUCTURES, { filter: (i) => i.structureType == STRUCTURE_CONTAINER });
-        var droppedtargets = creep.room.find(FIND_DROPPED_RESOURCES, { filter: (r) => r.resourceType == RESOURCE_ENERGY && r.amount >= creep.room.memory.dropped });
-        if (droppedtargets.length > 0) creep.memory.target = droppedtargets[_.random(0, droppedtargets.length - 1)];
-        else if (roomContainers.length != 0) {
-            target = _.sortBy(roomContainers, s => s.store[RESOURCE_ENERGY]).reverse();
-            creep.memory.target = target[0];
-        }
-    },
     pickupEnergy: function pickupEnergy(creep) {
         if (creep.memory.harv == 1) {
             var target;
@@ -31,19 +22,28 @@ module.exports = {
             else {
                 target = Game.getObjectById(creep.memory.target.id);
                 if (target == null || (target.structureType == STRUCTURE_CONTAINER && target.store[RESOURCE_ENERGY] == 0)) {
-                    delete creep.memory.target;
-                    creep.say("LOST");
+                    //delete creep.memory.target;
+                    //creep.say("LOST");
                     this.findEnergy(creep);
                 }
                 else if (creep.pickup(target) == ERR_NOT_IN_RANGE) DX.CreepMove(creep, target);
                 else if (creep.withdraw(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) DX.CreepMove(creep, target);
-                //creep.say("C:🢁");
             }
         }
         //----------------
         else {
             delete creep.memory.target;
             DX.storeEnergy(creep);
+        }
+    },
+    findEnergy: function findEnergy(creep) {
+        const roomContainers = creep.room.find(FIND_STRUCTURES, { filter: (i) => i.structureType == STRUCTURE_CONTAINER });
+        var droppedtargets = creep.room.find(FIND_DROPPED_RESOURCES, { filter: (r) => r.resourceType == RESOURCE_ENERGY && r.amount >= creep.room.memory.dropped });
+        if (droppedtargets.length > 0) creep.memory.target = droppedtargets[_.random(0, droppedtargets.length - 1)];
+        else if (roomContainers.length != 0) {
+            target = _.sortBy(roomContainers, s => s.store[RESOURCE_ENERGY]).reverse();
+            ranTarget = Math.floor(Math.random() * target.length);
+            creep.memory.target = target[ranTarget];
         }
     },
     storeEnergy: function storeEnergy(creep) {
@@ -60,7 +60,6 @@ module.exports = {
         if (target) {
             DX.CreepMark(creep, target, "#00ff00", "STORE");
             if (creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) DX.CreepMove(creep, target);
-            //creep.say("C:🢃");
         }
     },
     //HELPER FUNCTIONS-------------------------------------------------------------
@@ -111,7 +110,7 @@ module.exports = {
     },
     //SHARE TO OTHERS LIKE YOU-------------------------------------------------------------
     ShareEnergy: function ShareEnergy(creep) {
-        var targets = creep.pos.findInRange(FIND_MY_CREEPS, 1, {
+        var targets = creep.pos.findInRange(FIND_MY_CREEPS, 2, {
             filter: function (object) {
                 if (object.memory.role == creep.memory.role && object.store[RESOURCE_ENERGY] < object.store.getCapacity() && creep.store[RESOURCE_ENERGY] != 0) {
                     return object;
@@ -165,17 +164,18 @@ module.exports = {
         return obj[key];
     },
     FindRepairs: function FindRepairs(spawn) {
-        var repairs = spawn.room.find(FIND_STRUCTURES, { filter: (i) => i.hits < i.hitsMax/2});
+        var repairs = spawn.room.find(FIND_STRUCTURES, { filter: (i) => i.hits < i.hitsMax / 2 });
         var repairs = _.sortBy(repairs, s => s.hits);
         if (repairs && repairs != undefined) {
             var repairs = _.sortBy(repairs, s => s.hits);
             spawn.room.memory.Repairables = repairs;
         }
     },
-    FindBuilds: function FindBuilds(Room) {
+    FindBuilds: function FindBuilds(spawn) {
         var builds = [];
-        var builds = Room.find(FIND_CONSTRUCTION_SITES);
-        Room.memory.ToBuild = builds;
+        var builds = spawn.room.find(FIND_CONSTRUCTION_SITES);
+        builds = _.sortBy(builds, s => s.progressTotal);
+        spawn.room.memory.ToBuild = builds;
     },
     FindCost: function FindCost(spawn, role) {
         var totalCost = 0;

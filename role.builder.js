@@ -1,7 +1,7 @@
 module.exports = {
     run: function (creep) {
         var roomname = creep.room.name + "-Builders";
-        var toBuild = creep.room.find(FIND_CONSTRUCTION_SITES);
+        
         //###################################
         if (creep.room.memory.Repairables.length != 0) {
             creep.memory.repairing = true;
@@ -19,10 +19,11 @@ module.exports = {
             }
             else creep.memory.repairing = false;
         }
-        else if (toBuild.length != 0) {
+        else if (creep.room.memory.ToBuild.length != 0) {
             //creep.say('🏗️')
-            targets = _.sortBy(toBuild, s => s.progressTotal);
+            targets = creep.room.memory.ToBuild
             target = targets[0];
+            //target = creep.pos.findClosestByRange(targets);
             if (target != undefined) {
                 DX.CreepMark(creep, target, "#ff00ff", "BUILD " + target.progress + "/" + target.progressTotal);
                 if (creep.build(target) == ERR_NOT_IN_RANGE) DX.CreepMove(creep, target);
