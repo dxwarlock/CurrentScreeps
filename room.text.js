@@ -21,7 +21,7 @@ module.exports = {
             Game.spawns[name].room.visual.text("QUEUED: " + Game.spawns[name].room.memory.queued, x, y + 3, textFormat);
             Game.spawns[name].room.visual.text("Now Spawning: " + spawningCreep.name, x, y + 4, textFormat);
             //SPAWN TEXT
-            if (Game.spawns[name].room.memory.isSpawning != "NOTHING") Game.spawns[name].room.visual.text("🛑"+Game.spawns[name].room.memory.queued, Game.spawns[name].pos.x + 2, Game.spawns[name].pos.y, textFormat2);
+            if (Game.spawns[name].room.memory.isSpawning != "NOTHING") Game.spawns[name].room.visual.text("🛑"+Game.spawns[name].room.memory.queued + ' '+ Game.spawns[name].room.energyAvailable+'/'+Game.spawns[name].room.memory.cost, Game.spawns[name].pos.x + 2, Game.spawns[name].pos.y, textFormat2);
             else if (Game.spawns[name].spawning != null) Game.spawns[name].room.visual.text(spawningCreep.name, Game.spawns[name].pos.x + 2, Game.spawns[name].pos.y, textFormat2);
             //CONTROLLER PROGRESS
             var controlProgress = (Game.spawns[name].room.controller.progress /+ Game.spawns[name].room.controller.progressTotal*100).toFixed(4) + "%";
