@@ -1,9 +1,12 @@
 module.exports = {
     run: function (creep) {
-        var roomname = creep.room.name + "-Guard";
+        var roomname = creep.memory.room + "-Guard";
+        console.log(roomname)
         const ctarget = creep.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
         const starget = creep.pos.findClosestByRange(FIND_HOSTILE_STRUCTURES);
-        if (creep.room != Game.flags.Attack.room) DX.CreepMove(creep, Game.flags.Attack);
+        if (Game.flags.Attack) {
+            if (creep.room != Game.flags.Attack.room) DX.CreepMove(creep, Game.flags.Attack);
+        }
         else if (ctarget != null) {
             if (creep.attack(ctarget) == ERR_NOT_IN_RANGE) {
                 creep.rangedAttack(ctarget);

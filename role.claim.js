@@ -7,6 +7,7 @@ module.exports = {
         else if (creep.room != Game.flags.Claim.room) DX.CreepMove(creep, Game.flags.Claim);
         else {
             if (creep.room.controller.my != true) {
+                console.log(creep.claimController(creep.room.controller))
                 if (creep.claimController(creep.room.controller) == ERR_NOT_IN_RANGE) DX.CreepMove(creep, creep.room.controller);
             }
             else {
