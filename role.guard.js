@@ -1,7 +1,6 @@
 module.exports = {
     run: function (creep) {
         var roomname = creep.memory.room + "-Guard";
-        console.log(roomname)
         const ctarget = creep.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
         const starget = creep.pos.findClosestByRange(FIND_HOSTILE_STRUCTURES);
         if (Game.flags.Attack) {
