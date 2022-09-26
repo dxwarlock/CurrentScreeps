@@ -10,25 +10,25 @@ module.exports = {
         var roletowers = require('role.towers');
         var roomspawning = require('room.spawning');
         var roomlinks = require('room.links');
-
-        for (var name in Game.spawns) {
-            var spawn = Game.spawns[name];
-            DX.FindRepairs(spawn);
-            DX.FindBuilds(spawn);
-        }
+        var roomterm = require('room.terminal');
+        //memory cleaning
         for (var name in Game.flags) Memory.flags[name] = Game.flags[name];
         for (var name in Memory.flags) if (!Game.flags[name]) delete Memory.flags[name];
         for (var name in Memory.creeps) if (!Game.creeps[name]) delete Memory.creeps[name];
         for (var name in Memory.rooms) if (!Game.rooms[name]) delete Memory.rooms[name];
         for (var name in Memory.rooms) if (!Game.rooms[name].Links) delete Memory.rooms[name].Links;
-
-        roomspawning.SpawnStuff();
-        roletowers.run();
-        roomlinks.run();
-
+        //run scripts
+        for (var name in Game.spawns) {
+            var spawn = Game.spawns[name];
+            roomspawning.SpawnStuff(spawn);
+            roomlinks.run(spawn);
+            roletowers.run(spawn);
+            roomterm.run(spawn);
+            DX.FindRepairs(spawn);
+            DX.FindBuilds(spawn);
+        }        
         for (var name in Game.creeps) {
             var creep = Game.creeps[name];
-            //creep.room.visual.text(creep.memory.role, creep.pos.x, creep.pos.y-0.5, textFormat);
             //creep.suicide();
             if (creep.ticksToLive < 50) creep.say('DYING!')
             if (creep.memory.role == 'harvester') roleharvester.run(creep);

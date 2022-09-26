@@ -2,6 +2,7 @@ Memory.sources = Memory.sources || {};
 Memory.flags = Memory.flags || {};
 Memory.sources = Memory.sources || {};
 Memory.pathcolor = Memory.pathcolor || {};
+Memory.containers = Memory.containers || {};
 //#####################
 Memory.pathcolor.harvester = "#ffffff"
 Memory.pathcolor.upgrader = "#ff00ff"
