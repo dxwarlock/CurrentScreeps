@@ -22,14 +22,13 @@ module.exports = {
             if (!creep.memory.target) this.findEnergy(creep);
             else {
                 target = Game.getObjectById(creep.memory.target.id);
-                if (target == null || target.resourceType == RESOURCE_ENERGY || target.store[RESOURCE_ENERGY] == 0) {
-
+                if (target == null || (target.structureType == STRUCTURE_CONTAINER || STRUCTURE_LINK || STRUCTURE_STORAGE || STRUCTURE_TERMINAL) && target.store[RESOURCE_ENERGY] == 0) {
                     this.findEnergy(creep);
-                     DX.CreepMove(creep, Game.flags[flagname]);
+                    DX.CreepMove(creep, Game.flags[flagname]);
                 }
                 else if (creep.pickup(target) == ERR_NOT_IN_RANGE) DX.CreepMove(creep, target);
                 else if (creep.withdraw(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) DX.CreepMove(creep, target);
-                if(target) DX.CreepMark(creep, target, "#FF00ff", "CGET");
+                if (target) DX.CreepMark(creep, target, "#6A1717", "CGET");
             }
         }
         //----------------
@@ -41,17 +40,14 @@ module.exports = {
     findEnergy: function findEnergy(creep) {
         var flagname = creep.room.name + "-Carry";
         const notFull = creep.room.energyAvailable < creep.room.energyCapacityAvailable;
-        const TerminalRoom = Memory.containers.recv.room.name;        
-        const roomTerm = creep.room.find(FIND_MY_STRUCTURES, { filter: (i) => i.structureType == STRUCTURE_TERMINAL && i.store[RESOURCE_ENERGY] > 0 && creep.room.name == TerminalRoom});
+        const TerminalRoom = Memory.containers.recv.room.name;
+        const roomTerm = creep.room.find(FIND_MY_STRUCTURES, { filter: (i) => i.structureType == STRUCTURE_TERMINAL && i.store[RESOURCE_ENERGY] > 0 && creep.room.name == TerminalRoom });
         const roomLinks = creep.room.find(FIND_STRUCTURES, { filter: (i) => i.structureType == STRUCTURE_LINK && i.store.getFreeCapacity(RESOURCE_ENERGY) < 200 });
-        const roomContainers = creep.room.find(FIND_STRUCTURES, { filter: (i) => i.structureType == STRUCTURE_CONTAINER && i.store[RESOURCE_ENERGY] > 0});
+        const roomContainers = creep.room.find(FIND_STRUCTURES, { filter: (i) => i.structureType == STRUCTURE_CONTAINER && i.store[RESOURCE_ENERGY] > 0 });
         const roomStorage = creep.room.find(FIND_MY_STRUCTURES, { filter: (i) => i.structureType == STRUCTURE_STORAGE && i.store.getFreeCapacity(RESOURCE_ENERGY) > 0 });
         var droppedtargets = creep.room.find(FIND_DROPPED_RESOURCES, { filter: (r) => r.resourceType == RESOURCE_ENERGY && r.amount >= creep.room.memory.dropped });
         if (droppedtargets.length > 0) creep.memory.target = droppedtargets[_.random(0, droppedtargets.length - 1)];
-        else if(notFull  == true && roomStorage.length) {
-            target = roomStorage;
-            creep.memory.target = target[0];
-        }
+        else if (notFull == true && roomStorage.length) creep.memory.target = roomStorage[0];
         else if (roomLinks.length != 0) {
             target = _.sortBy(roomLinks, s => s.store[RESOURCE_ENERGY]).reverse();
             ranTarget = Math.floor(Math.random() * target.length);
@@ -62,22 +58,20 @@ module.exports = {
             ranTarget = Math.floor(Math.random() * target.length);
             creep.memory.target = target[ranTarget];
         }
-        else if (roomTerm.length){
-            target = roomTerm[0];
-            creep.memory.target = roomTerm[0];
+        else if (roomTerm.length) creep.memory.target = roomTerm[0];
+        else {
+            DX.CreepMove(creep, Game.flags[flagname]);
         }
-        else DX.CreepMove(creep, Game.flags[flagname]);
 
     },
     storeEnergy: function storeEnergy(creep) {
         var target;
         var flagname = creep.room.name + "-Carry";
-        const TerminalRoom = Memory.containers.recv.room.name; 
+        const TerminalRoom = Memory.containers.recv.room.name;
         const roomSpawn = creep.room.find(FIND_MY_STRUCTURES, { filter: (i) => (i.structureType == STRUCTURE_EXTENSION || i.structureType == STRUCTURE_SPAWN) && i.store.getFreeCapacity(RESOURCE_ENERGY) > 0 });
         const roomTowers = creep.room.find(FIND_MY_STRUCTURES, { filter: (i) => i.structureType == STRUCTURE_TOWER && i.energy < i.energyCapacity - 200 });
-        const roomTerm = creep.room.find(FIND_MY_STRUCTURES, { filter: (i) => i.structureType == STRUCTURE_TERMINAL && i.store.getFreeCapacity(RESOURCE_ENERGY) > 0 && creep.room.name != TerminalRoom});
+        const roomTerm = creep.room.find(FIND_MY_STRUCTURES, { filter: (i) => i.structureType == STRUCTURE_TERMINAL && i.store.getFreeCapacity(RESOURCE_ENERGY) > 0 && creep.room.name != TerminalRoom });
         const roomStorage = creep.room.find(FIND_MY_STRUCTURES, { filter: (i) => i.structureType == STRUCTURE_STORAGE && i.store.getFreeCapacity(RESOURCE_ENERGY) > 0 });
-
         if (roomSpawn.length) target = roomSpawn;
         else if (roomTowers.length) target = roomTowers;
         else if (roomTerm.length) target = roomTerm;
@@ -98,14 +92,14 @@ module.exports = {
         }
         var target;
         var flagname = creep.room.name + "-Helper";
-        const TerminalRoom = Memory.containers.recv.room.name; 
-        const roomTerm = creep.room.find(FIND_MY_STRUCTURES, { filter: (i) => i.structureType == STRUCTURE_TERMINAL && i.store[RESOURCE_ENERGY] > 0 && creep.room.name == TerminalRoom});
+        const TerminalRoom = Memory.containers.recv.room.name;
+        const roomTerm = creep.room.find(FIND_MY_STRUCTURES, { filter: (i) => i.structureType == STRUCTURE_TERMINAL && i.store[RESOURCE_ENERGY] > 0 && creep.room.name == TerminalRoom });
         const roomContainers = creep.room.find(FIND_STRUCTURES, { filter: (i) => i.structureType == STRUCTURE_CONTAINER && i.store.getFreeCapacity(RESOURCE_ENERGY) < 0 });
         const roomStorage = creep.room.find(FIND_MY_STRUCTURES, { filter: (i) => i.structureType == STRUCTURE_STORAGE && i.store[RESOURCE_ENERGY] > 0 });
         const roomExt = creep.room.find(FIND_MY_STRUCTURES, { filter: (i) => i.structureType == STRUCTURE_EXTENSION && i.store[RESOURCE_ENERGY] > 0 });
         const roomSpawn = creep.room.find(FIND_MY_STRUCTURES, { filter: (i) => i.structureType == STRUCTURE_SPAWN && i.store[RESOURCE_ENERGY] > 0 });
         if (creep.room.memory.isSpawning != "NOTHING" && creep.store[RESOURCE_ENERGY] == 0) DX.CreepMove(creep, Game.flags.Helpers);
-        else if(roomTerm.length) target = roomTerm;
+        else if (roomTerm.length) target = roomTerm;
         else if (roomContainers.length) target = roomContainers;
         else if (roomStorage.length) target = roomStorage;
         else if (roomExt.length) target = roomExt;
@@ -190,7 +184,7 @@ module.exports = {
             if (links.length != 0) {
                 target = creep.pos.findClosestByRange(links);
                 if ((target || target != null)) {
-                    if (target.store[RESOURCE_ENERGY] != 2000) {
+                    if (target.store.getFreeCapacity(RESOURCE_ENERGY) > 0) {
                         if (creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) DX.CreepMove(creep, target);
                     }
                     else {
@@ -202,7 +196,7 @@ module.exports = {
             else if (roomContainers.length != 0) {
                 target = creep.pos.findClosestByRange(roomContainers);
                 if ((target || target != null)) {
-                    if (target.store[RESOURCE_ENERGY] != 2000) {
+                    if (target.store.getFreeCapacity(RESOURCE_ENERGY) > 0) {
                         if (creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) DX.CreepMove(creep, target);
                     }
                     else {

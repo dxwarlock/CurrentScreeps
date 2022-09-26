@@ -2,21 +2,13 @@ module.exports = {
     run: function (creep) {
         var roomname = creep.room.name + "-Guard";
         const target = creep.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
-        if (target) {
+        if (Game.flags['Gather']) DX.CreepMove(creep, Game.flags['Gather']);
+        else if (target) {
             if (creep.attack(target) == ERR_NOT_IN_RANGE) {
+                creep.rangedAttack(target);
                 DX.CreepMove(creep, target);
             }
         }
-        else if(Game.flags[roomname]) {
-            DX.CreepMove(creep, Game.flags[roomname]);
-        }
-        else {
-            var flag1 = Game.flags.Defend1;
-            var flag2 = Game.flags.Defend2;
-            if (!creep.memory.flag) creep.memory.flag = flag1
-            if (creep.pos.inRangeTo(creep.memory.flag.pos.x, creep.memory.flag.pos.y, 1)) creep.memory.flag = flag2;
-            if (creep.pos.inRangeTo(creep.memory.flag.pos.x, creep.memory.flag.pos.y, 1)) creep.memory.flag = flag1;
-            DX.CreepMove(creep, new RoomPosition(creep.memory.flag.pos.x, creep.memory.flag.pos.y, creep.memory.flag.room.name));
-        }
+        else if (Game.flags[roomname]) DX.CreepMove(creep, Game.flags[roomname]);
     }
 };
