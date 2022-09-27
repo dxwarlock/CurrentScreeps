@@ -25,7 +25,7 @@ module.exports = {
 		}
 		else if (PowerTotal >= 500 && PowerTotal < 750) {
 			spawn.room.memory.dropped = 1;
-			Memory.rooms[roomName].Population = { 'harvester': sourecount, 'carry': sourecount * 2, 'upgrader': 2, 'helper': 3, 'builder': 3 };
+			Memory.rooms[roomName].Population = { 'harvester': sourecount, 'carry': sourecount * 2, 'upgrader': 3, 'helper': 3, 'builder': 3 };
 			spawn.room.memory.creepSpecs['harvester'] = [WORK, WORK, WORK, WORK, CARRY, MOVE];
 			spawn.room.memory.creepSpecs['carry'] = [CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE];
 			spawn.room.memory.creepSpecs['upgrader'] = [WORK, WORK, WORK, CARRY, MOVE];
@@ -35,7 +35,7 @@ module.exports = {
 		}
 		else if (PowerTotal >= 750 && PowerTotal < 1000) {
 			spawn.room.memory.dropped = 200;
-			Memory.rooms[roomName].Population = { 'harvester': sourecount, 'carry': sourecount * 2, 'upgrader': 2, 'helper': 3, 'builder': 3, 'guard': 2 };
+			Memory.rooms[roomName].Population = { 'harvester': sourecount, 'carry': sourecount * 2, 'upgrader': 3, 'helper': 3, 'builder': 3, 'guard': 2 };
 			spawn.room.memory.creepSpecs['harvester'] = [WORK, WORK, WORK, WORK, WORK, CARRY, MOVE, MOVE];
 			spawn.room.memory.creepSpecs['carry'] = [CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, ATTACK];
 			spawn.room.memory.creepSpecs['upgrader'] = [WORK, WORK, WORK, WORK, WORK, CARRY, MOVE];
@@ -45,7 +45,7 @@ module.exports = {
 		}
 		else if (PowerTotal >= 1000 && PowerTotal < 2000) {
 			spawn.room.memory.dropped = 250;
-			Memory.rooms[roomName].Population = { 'harvester': sourecount, 'carry': sourecount * 2, 'upgrader': 2, 'helper': 2, 'builder': 2, 'guard': 2,  'claim': 1 };
+			Memory.rooms[roomName].Population = { 'harvester': sourecount, 'carry': sourecount * 2, 'upgrader': 3, 'helper': 3, 'builder': 2, 'guard': 2, 'claim': 1 };
 			spawn.room.memory.creepSpecs['harvester'] = [WORK, WORK, WORK, WORK, WORK, CARRY, MOVE, MOVE, MOVE];
 			spawn.room.memory.creepSpecs['carry'] = [CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, ATTACK];
 			spawn.room.memory.creepSpecs['upgrader'] = [WORK, WORK, WORK, WORK, WORK, WORK, WORK, CARRY, CARRY, CARRY, MOVE];
@@ -57,7 +57,7 @@ module.exports = {
 		}
 		else if (PowerTotal >= 2000) {
 			spawn.room.memory.dropped = 250;
-			Memory.rooms[roomName].Population = { 'harvester': sourecount, 'carry': sourecount * 3, 'upgrader': 3, 'helper': 2, 'builder': 2, 'guard': 2, 'claim': 1 };
+			Memory.rooms[roomName].Population = { 'harvester': sourecount, 'carry': sourecount * 3, 'upgrader': 4, 'helper': 3, 'builder': 2, 'guard': 2, 'claim': 1 };
 			spawn.room.memory.creepSpecs['harvester'] = [WORK, WORK, WORK, WORK, WORK, CARRY, MOVE, MOVE, MOVE];
 			spawn.room.memory.creepSpecs['carry'] = [CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, ATTACK];
 			spawn.room.memory.creepSpecs['upgrader'] = [WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE];
@@ -72,46 +72,36 @@ module.exports = {
 		var panic = _.countBy(spawn.room.find(FIND_MY_CREEPS), 'memory.role');
 		var roles = _.toArray(Object.keys(spawnMem));
 		var name = spawn.room.name;
+		var creepspecs;
 		for (var i in roles) {
 			var role = roles[i];
 			var creeps = _.filter(Memory.creeps, function (creep) {
 				if (creep.role && (creep.spawn == spawn.name)) return creep.role == role;
 			});
 			if (panic.harvester < 1 || panic.harvester == undefined) {
-				totalCost = 300;
-				var base = name + '-' + 'PANIC-harvester'.toUpperCase();
-				var suffixn = '_' + Math.round(Game.time / 5);
-				var title = base.concat(suffixn.toString());
-				spawningText = title;
-				var room = spawn.room.name;
-				spawn.room.memory.isSpawning = title;
-				spawn.spawnCreep([WORK, CARRY, MOVE], title, { memory: { 'role': 'harvester', 'room': room, 'spawn': spawn.name } })
+				role = 'harvester', creepspecs = [WORK, CARRY, MOVE];
 				break;
 			}
 			else if (panic.carry < 1 || panic.carry == undefined) {
-				totalCost = 150;
-				var base = name + '-' + 'PANIC-carry'.toUpperCase();
-				var suffixn = '_' + Math.round(Game.time / 5);
-				var title = base.concat(suffixn.toString());
-				spawningText = title;
-				var room = spawn.room.name;
-				spawn.room.memory.isSpawning = title;
-				spawn.spawnCreep([CARRY, CARRY, MOVE], title, { memory: { 'role': 'carry', 'room': room, 'spawn': spawn.name } })
+				role = 'carry', creepspecs = [CARRY, CARRY, MOVE];
 				break;
 			}
 			else if (creeps.length < spawnMem[role]) {
-				totalCost = DX.FindCost(spawn, role);
-				var base = name + '-' + role.toUpperCase();
-				var suffixn = '-' + Math.round(Game.time / 5);
-				var title = base.concat(suffixn.toString());
-				spawningText = title;
-				var room = spawn.room.name;
-				spawn.room.memory.isSpawning = title;
-				spawn.spawnCreep(spawn.room.memory.creepSpecs[role], title, { memory: { 'role': role, 'room': room, 'spawn': spawn.name } })
+				creepspecs = spawn.room.memory.creepSpecs[role];
 				break;
 			}
-			else spawn.room.memory.isSpawning = "NOTHING";
 		}
+		if (creepspecs != undefined) {
+			totalCost = DX.FindCost(spawn, role);
+			var base = name + '-' + role.toUpperCase();
+			var suffixn = '-' + Math.round(Game.time / 5);
+			var title = base.concat(suffixn.toString());
+			spawningText = title;
+			var room = spawn.room.name;
+			spawn.room.memory.isSpawning = title;
+			spawn.spawnCreep(creepspecs, title, { memory: { 'role': role, 'room': room, 'spawn': spawn.name } })
+		}
+		else spawn.room.memory.isSpawning = "NOTHING";
 		spawn.room.memory.cost = totalCost;
 		spawn.room.memory.queued = spawningText;
 		roomtext.run(spawn);

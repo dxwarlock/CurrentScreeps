@@ -1,6 +1,6 @@
 //--------------------------------------
 module.exports = {
-    CreepMove: function creepMove(creep, target) {
+    CreepMove: function (creep, target) {
         var pColor = creep.memory.role
         creep.moveTo(target, { reusePath: 2, visualizePathStyle: { lineStyle: 'dotted', stroke: Memory.pathcolor[pColor], strokeWidth: 0.1, opacity: 0.9 } })
     },
@@ -11,11 +11,11 @@ module.exports = {
             backgroundPadding: 0.1,
             backgroundColor: color,
             stroke: "#000000",
-            opacity: 0.9
+            opacity: 0.6
         });
     },
     //CARRY ENERGY FUNCTIONS########################################################################################################
-    pickupEnergy: function pickupEnergy(creep) {
+    pickupEnergy: function (creep) {
         var flagname = creep.room.name + "-Carry";
         if (creep.memory.harv == 1) {
             var target;
@@ -24,7 +24,7 @@ module.exports = {
                 target = Game.getObjectById(creep.memory.target.id);
                 if (target == null || target == undefined) this.findEnergy(creep);
                 else if (creep.pickup(target) == ERR_NOT_IN_RANGE) {
-                    DX.CreepMark(creep, target, "#6A1717", "CGET");
+                    DX.CreepMark(creep, target, "#6A1717", "G");
                     DX.CreepMove(creep, target);
                 }
                 else if ('store' in target) {
@@ -32,7 +32,7 @@ module.exports = {
                     else {
                         if (creep.withdraw(target, RESOURCE_ENERGY) == ERR_NOT_ENOUGH_RESOURCES) this.findEnergy(creep);
                         else if (creep.withdraw(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                            DX.CreepMark(creep, target, "#6A1717", "CGET");
+                            DX.CreepMark(creep, target, "#6A1717", "G");
                             DX.CreepMove(creep, target);
                         }
                     }
@@ -45,7 +45,7 @@ module.exports = {
             DX.storeEnergy(creep);
         }
     },
-    findEnergy: function findEnergy(creep) {
+    findEnergy: function (creep) {
         var flagname = creep.room.name + "-Carry";
         const notFull = creep.room.energyAvailable < creep.room.energyCapacityAvailable;
         const TerminalRoom = Memory.containers.recv.room.name;
@@ -72,7 +72,7 @@ module.exports = {
         else if (roomTerm.length) creep.memory.target = roomTerm[0];
         else DX.CreepMove(creep, Game.flags[flagname]);
     },
-    storeEnergy: function storeEnergy(creep) {
+    storeEnergy: function (creep) {
         var target;
         var flagname = creep.room.name + "-Carry";
         const TerminalRoom = Memory.containers.recv.room.name;
@@ -87,13 +87,12 @@ module.exports = {
         else DX.CreepMove(creep, Game.flags[flagname]);
         target = creep.pos.findClosestByRange(target);
         if (target) {
-            DX.CreepMark(creep, target, "#00ff00", "STORE");
+            DX.CreepMark(creep, target, "#00ff00", "S");
             if (creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) DX.CreepMove(creep, target);
         }
     },
     //HELPER ENERGY FUNCTIONS########################################################################################################
-    getEnergy: function getEnergy(creep) {
-
+    getEnergy: function (creep) {
         if (creep.room.memory.isSpawning != "NOTHING") {
             DX.CreepMove(creep, Game.flags[flagname]);
             return;
@@ -115,9 +114,9 @@ module.exports = {
         else DX.CreepMove(creep, Game.flags.Helpers);
         target = creep.pos.findClosestByRange(target);
         if (creep.withdraw(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) DX.CreepMove(creep, target);
-        DX.CreepMark(creep, target, "#0000ff", "GET");
+        DX.CreepMark(creep, target, "#0000ff", "F");
     },
-    GiveEnergy: function GiveEnergy(creep) {
+    GiveEnergy: function (creep) {
         var flagname = creep.room.name + "-Helper";
         let foundBuilderCreeps = creep.room.find(FIND_MY_CREEPS, {
             filter: (creep) => {
@@ -136,14 +135,14 @@ module.exports = {
         if (foundBuilderCreeps.length != 0) target = foundBuilderCreeps[0];
         else if (builds.length == 0 && foundUpgraderCreeps.length != 0) target = foundUpgraderCreeps[0];
         if (target) {
-            DX.CreepMark(creep, target, "#ffaa00", "GIVE");
+            DX.CreepMark(creep, target, "#ffaa00", "G");
             if (creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) DX.CreepMove(creep, target);
         }
         else DX.CreepMove(creep, Game.flags[flagname]);
     },
     //SHARE TO OTHERS LIKE YOU-------------------------------------------------------------
-    ShareEnergy: function ShareEnergy(creep) {
-        var targets = creep.pos.findInRange(FIND_MY_CREEPS, 2, {
+    ShareEnergy: function (creep) {
+        var targets = creep.pos.findInRange(FIND_MY_CREEPS, 1, {
             filter: function (object) {
                 if (object.memory.role == creep.memory.role && object.store[RESOURCE_ENERGY] < object.store.getCapacity() && creep.store[RESOURCE_ENERGY] != 0) {
                     return object;
@@ -161,7 +160,7 @@ module.exports = {
         }
     },
     //MINING FUNCTIONS########################################################################################################
-    getOpenSource: function getOpenSource(creep) {
+    getOpenSource: function (creep) {
         var source = creep.pos.findClosestByRange(FIND_SOURCES, {
             filter: function (source) {
                 if (Memory.sources[source.id] == undefined || Memory.sources[source.id].miner == undefined || Memory.sources[source.id].miner == creep.id) return true;
@@ -171,7 +170,7 @@ module.exports = {
         });
         return source;
     },
-    setSourceToMine: function setSourceToMine(source, creep) {
+    setSourceToMine: function (source, creep) {
         if (!source) return;
         if (Memory.sources[source.id] == undefined) Memory.sources[source.id] = {
             id: source.id
@@ -185,7 +184,7 @@ module.exports = {
         if (creep.store[RESOURCE_ENERGY] == 0) creep.memory.harv = 1;
         if (creep.store.getFreeCapacity() == 0) creep.memory.harv = 0;
     },
-    MineEnergy: function MineEnergy(creep) {
+    MineEnergy: function (creep) {
         if (creep.store.getFreeCapacity() == 0) {
             const roomContainers = creep.room.find(FIND_STRUCTURES, { filter: (i) => i.structureType == STRUCTURE_CONTAINER && creep.pos.inRangeTo(i, 3) });
             const links = creep.room.find(FIND_STRUCTURES, { filter: (i) => i.structureType == STRUCTURE_LINK && creep.pos.inRangeTo(i, 3) });
@@ -227,14 +226,14 @@ module.exports = {
         else creep.harvest(source);
     },
     //BUILDER FUNCTIONS########################################################################################################
-    FindRepairs: function FindRepairs(spawn) {
+    FindRepairs: function (spawn) {
         var repairs = [];
         var repairs = spawn.room.find(FIND_STRUCTURES, { filter: (i) => i.hits < i.hitsMax / 2 });
         var repairs = _.sortBy(repairs, s => s.hits);
         var repairs = _.sortBy(repairs, s => s.hits);
         spawn.room.memory.Repairables = repairs;
     },
-    FindBuilds: function FindBuilds(spawn) {
+    FindBuilds: function (spawn) {
         spawn.room.memory.ToBuild = spawn.room.memory.ToBuild || {};
         var builds = [];
         var builds = spawn.room.find(FIND_CONSTRUCTION_SITES);
@@ -242,10 +241,10 @@ module.exports = {
         spawn.room.memory.ToBuild = builds;
     },
     //OTHER FUNCTIONS########################################################################################################
-    JSONs: function JSONs(string) {
+    JSONs: function (string) {
         console.log(JSON.stringify(string));
     },
-    randomValueOf: function randomValueOf(obj) {
+    randomValueOf: function (obj) {
         var keys = Object.keys(obj);
         var len = keys.length;
         var rnd = Math.floor(Math.random() * len);
@@ -253,7 +252,7 @@ module.exports = {
         return obj[key];
     },
 
-    FindCost: function FindCost(spawn, role) {
+    FindCost: function (spawn, role) {
         var totalCost = 0;
         for (var i in spawn.room.memory.creepSpecs[role]) {
             var Part = spawn.room.memory.creepSpecs[role][i];
@@ -268,7 +267,7 @@ module.exports = {
         }
         return totalCost;
     },
-    Build_Time: function Build_Time(creep, target, offset) {
+    Build_Time: function (creep, target, offset) {
         if (Game.time % 3 !== 0) return;
         if (creep.store[RESOURCE_ENERGY] === 0) return;
         var B = target.pos.findInRange(FIND_MY_CREEPS, 1, {
@@ -280,13 +279,13 @@ module.exports = {
         var timeS = DX.minTommss(time * 1.3 / 60 / 60);
         creep.say(timeS);
     },
-    minTommss: function minTommss(minutes) {
+    minTommss: function (minutes) {
         var Hour = Math.floor(Math.abs(minutes))
         var Min = Math.floor((Math.abs(minutes) * 60) % 60);
         var Sec = Math.floor((Math.abs(minutes) * 60 * 60) % 60);
         return (Hour < 10 ? "0" : "") + Hour + ":" + (Min < 10 ? "0" : "") + Min + ":" + (Sec < 10 ? "0" : "") + Sec;
     },
-    Claim: function Claim(creep) {
+    Claim: function (creep) {
         if (!creep.room.controller.my && creep.room.find(FIND_HOSTILE_SPAWNS) !== '') {
             creep.moveTo(creep.room.controller);
             creep.claimController(creep.room.controller);
