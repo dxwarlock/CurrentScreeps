@@ -3,6 +3,7 @@ module.exports = {
         var receiver = [];
         var senders = [];
         var link = spawn.room.find(FIND_STRUCTURES, { filter: (i) => i.structureType == STRUCTURE_LINK });
+        
         for (var i in link) {
             targLink = link[i];
             var spawn = targLink.room.find(FIND_STRUCTURES, { filter: (i) => i.structureType == STRUCTURE_SPAWN });

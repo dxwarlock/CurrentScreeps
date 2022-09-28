@@ -11,7 +11,8 @@ module.exports = {
         var roomspawning = require('room.spawning');
         var roomlinks = require('room.links');
         var roomterm = require('room.terminal');
-        //memory cleaning
+        var specs = require('room.setspecs');
+        //memory cleaning--
         for (var name in Game.flags) Memory.flags[name] = Game.flags[name];
         for (var name in Memory.flags) if (!Game.flags[name]) delete Memory.flags[name];
         for (var name in Memory.creeps) if (!Game.creeps[name]) delete Memory.creeps[name];
@@ -26,7 +27,8 @@ module.exports = {
             roomterm.run(spawn);
             DX.FindRepairs(spawn);
             DX.FindBuilds(spawn);
-        }        
+            specs.setSpecs(spawn);
+        }
         for (var name in Game.creeps) {
             var creep = Game.creeps[name];
             //creep.suicide();

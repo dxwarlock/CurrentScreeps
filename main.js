@@ -1,3 +1,7 @@
+global.DX = require('basic.functions');
+var globaltick = require('global.tick');
+
+
 Memory.sources = Memory.sources || {};
 Memory.flags = Memory.flags || {};
 Memory.sources = Memory.sources || {};
@@ -11,9 +15,6 @@ Memory.pathcolor.helper = "#ffff00"
 Memory.pathcolor.carry = "#00ff00"
 Memory.pathcolor.guard = "#ff0000"
 Memory.pathcolor.claim = "#ffaa22"
-//#####################
-global.DX = require('basic.functions');
-var globaltick = require('global.tick');
 //#####################
 module.exports.loop = function () {
 	globaltick.everyTick();

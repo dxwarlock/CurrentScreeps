@@ -1,6 +1,7 @@
 module.exports = {
     run: function (spawn) {
         var roomname = spawn.room.name;
+        
         towers = spawn.room.find(FIND_MY_STRUCTURES, { filter: { structureType: STRUCTURE_TOWER } })
         _.forEach(towers, function (tower) {
             var woundedCreeps = tower.room.find(FIND_MY_CREEPS, { filter: (c) => c.hits < c.hitsMax });

@@ -14,7 +14,7 @@ module.exports = {
             opacity: 0.6
         });
     },
-    //CARRY ENERGY FUNCTIONS########################################################################################################
+    //CARRY ENERGY FUNCTIONS#######################################################################################################
     pickupEnergy: function (creep) {
         var flagname = creep.room.name + "-Carry";
         if (creep.memory.harv == 1) {

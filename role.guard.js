@@ -3,6 +3,7 @@ module.exports = {
         var roomname = creep.memory.room + "-Guard";
         const ctarget = creep.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
         const starget = creep.pos.findClosestByRange(FIND_HOSTILE_STRUCTURES);
+        
         if (Game.flags.Attack) {
             if (creep.room != Game.flags.Attack.room) DX.CreepMove(creep, Game.flags.Attack);
         }
