@@ -19,7 +19,7 @@ module.exports = {
         spawn.room.visual.text("COST: " + spawn.room.memory.cost + " | HAVE: " + roomPower, x, y + 2, textFormat);
         spawn.room.visual.text("QUEUED: " + spawn.room.memory.queued, x, y + 3, textFormat);
         spawn.room.visual.text("Now Spawning: " + spawningCreep.name, x, y + 4, textFormat);
-        spawn.room.visual.text("GCL: " + (Game.gcl.progress/Game.gcl.progressTotal*100).toFixed(4)+'%', x, y + 5, textFormat);
+        spawn.room.visual.text("GCL: " + (Game.gcl.progress/Game.gcl.progressTotal*100).toFixed(4)+'%', x, y + 5.1, textFormat);
         //SPAWN TEXT
         if (spawn.room.memory.isSpawning != "NOTHING") spawn.room.visual.text("🛑" + spawn.room.memory.queued + ' ' + spawn.room.energyAvailable + '/' + spawn.room.memory.cost, spawn.pos.x + 2, spawn.pos.y, textFormat2);
         else if (spawn.spawning != null) spawn.room.visual.text(spawningCreep.name, spawn.pos.x + 2, spawn.pos.y, textFormat2);
