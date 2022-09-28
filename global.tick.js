@@ -31,11 +31,11 @@ module.exports = {
             var creep = Game.creeps[name];
             //creep.suicide();
             if (creep.ticksToLive < 50) creep.say('DYING!')
+            if (creep.memory.role == 'carry') rolecarry.run(creep);
+            if (creep.memory.role == 'helper') rolehelper.run(creep);
             if (creep.memory.role == 'harvester') roleharvester.run(creep);
             if (creep.memory.role == 'upgrader') roleupgrader.run(creep);
             if (creep.memory.role == 'builder') rolebuilder.run(creep);
-            if (creep.memory.role == 'helper') rolehelper.run(creep);
-            if (creep.memory.role == 'carry') rolecarry.run(creep);
             if (creep.memory.role == 'guard') roleguard.run(creep);
             if (creep.memory.role == 'claim') roleclaim.run(creep);
         }
