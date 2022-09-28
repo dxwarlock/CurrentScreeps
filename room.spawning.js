@@ -13,11 +13,11 @@ module.exports = {
 			var creeps = _.filter(Memory.creeps, function (creep) {
 				if (creep.role && (creep.spawn == spawn.name)) return creep.role == role;
 			});
-			if (panic.harvester == 0 && spawn.room.energyAvailable < 300) {
+			if ((panic.harvester < 1 || panic.harvester == undefined) && spawn.room.energyAvailable <= 300) {
 				role = 'harvester', creepspecs = [WORK, CARRY, MOVE];
 				break;
 			}
-			else if (panic.carry == 0 && spawn.room.energyAvailable < 300) {
+			else if ((panic.carry < 1 || panic.carry == undefined) && spawn.room.energyAvailable <= 300) {
 				role = 'carry', creepspecs = [CARRY, CARRY, MOVE];
 				break;
 			}
@@ -26,7 +26,6 @@ module.exports = {
 				break;
 			}
 		}
-		
 		//build creeps----------------
 		if (creepspecs != undefined) {
 			totalCost = DX.FindCost(spawn, role);

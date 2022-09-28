@@ -6,8 +6,8 @@ module.exports = {
 		Memory.rooms[roomName].name = roomName;
 		var sourceCount = spawn.room.find(FIND_SOURCES);
 		var PowerTotal = spawn.room.energyCapacityAvailable;
+		Memory.rooms[roomName].power = PowerTotal;
 		var sourecount = sourceCount.length;
-		
 		if (PowerTotal <= 300) {
 			spawn.room.memory.dropped = 1;
 			spawn.room.memory.minEnergy = 300;
