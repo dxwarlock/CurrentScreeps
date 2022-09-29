@@ -13,11 +13,12 @@ module.exports = {
 			var creeps = _.filter(Memory.creeps, function (creep) {
 				if (creep.role && (creep.spawn == spawn.name)) return creep.role == role;
 			});
-			if ((panic.harvester < 1 || panic.harvester == undefined) && spawn.room.energyAvailable <= 300) {
+			var totalcreeps = spawn.room.find(FIND_MY_CREEPS).length;
+			if ((panic.harvester < 1 || panic.harvester == undefined) && totalcreeps == 0) {
 				role = 'harvester', creepspecs = [WORK, CARRY, MOVE];
 				break;
 			}
-			else if ((panic.carry < 1 || panic.carry == undefined) && spawn.room.energyAvailable <= 300) {
+			else if ((panic.carry < 1 || panic.carry == undefined) && totalcreeps == 0) {
 				role = 'carry', creepspecs = [CARRY, CARRY, MOVE];
 				break;
 			}

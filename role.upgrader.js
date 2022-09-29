@@ -8,6 +8,5 @@ module.exports = {
             creep.upgradeController(creep.room.controller);
             DX.ShareEnergy(creep);
         }
-
     }
 };
