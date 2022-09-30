@@ -2,13 +2,13 @@
 module.exports = {
     CreepMove: function (creep, target) {
         var pColor = creep.memory.role
-        creep.moveTo(target, { reusePath: 2, visualizePathStyle: { lineStyle: 'dotted', stroke: Memory.pathcolor[pColor], strokeWidth: 0.1, opacity: 0.9 } })
+        creep.moveTo(target, { reusePath: 2, visualizePathStyle: { lineStyle: 'dotted', stroke: Memory.pathcolor[pColor], strokeWidth: 0.1, opacity: 0.4 } })
     },
     CreepMark: function creepMark(creep, target, color, text) {
         creep.room.visual.text(text, target.pos.x, target.pos.y, {
             align: 'center',
-            font: '0.25 Arial',
-            backgroundPadding: 0.1,
+            font: '0.4 Arial',
+            backgroundPadding: 0.01,
             backgroundColor: color,
             stroke: "#000000",
             opacity: 0.6
@@ -32,7 +32,7 @@ module.exports = {
                     else {
                         if (creep.withdraw(target, RESOURCE_ENERGY) == ERR_NOT_ENOUGH_RESOURCES) this.findEnergy(creep);
                         else if (creep.withdraw(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                            DX.CreepMark(creep, target, "#6A1717", "G");
+                            DX.CreepMark(creep, target, "#6A1717", "🢁");
                             DX.CreepMove(creep, target);
                         }
                     }
@@ -50,7 +50,7 @@ module.exports = {
         var flagname = creep.room.name + "-Carry";
         const notFull = creep.room.energyAvailable < creep.room.energyCapacityAvailable;
         const droppedtargets = creep.room.find(FIND_DROPPED_RESOURCES, { filter: (r) => r.resourceType == RESOURCE_ENERGY && r.amount >= creep.room.memory.dropped });
-        const roomLinks = creep.room.find(FIND_STRUCTURES, { filter: (i) => i.structureType == STRUCTURE_LINK && i.store[RESOURCE_ENERGY] > 300 && i.pos.inRangeTo(roomSpawn[0], 5)});
+        const roomLinks = creep.room.find(FIND_STRUCTURES, { filter: (i) => i.structureType == STRUCTURE_LINK && i.store[RESOURCE_ENERGY] > 300 && i.pos.inRangeTo(roomSpawn[0], 5) });
         const roomStorage = creep.room.find(FIND_MY_STRUCTURES, { filter: (i) => i.structureType == STRUCTURE_STORAGE && i.store[RESOURCE_ENERGY] > 0 });
         const roomTerm = creep.room.find(FIND_MY_STRUCTURES, { filter: (i) => i.structureType == STRUCTURE_TERMINAL && i.store[RESOURCE_ENERGY] > 0 && creep.room.name == Memory.containers.recv.room.name });
         const roomContainers = creep.room.find(FIND_STRUCTURES, { filter: (i) => i.structureType == STRUCTURE_CONTAINER && i.store[RESOURCE_ENERGY] > 0 });
@@ -74,24 +74,25 @@ module.exports = {
         else DX.CreepMove(creep, Game.flags[flagname]);
     },
     storeEnergy: function (creep) {
-
         var target;
         var flagname = creep.room.name + "-Carry";
         const TerminalRoom = Memory.containers.recv.room.name;
-        const roomext = creep.room.find(FIND_MY_STRUCTURES, { filter: (i) => (i.structureType == STRUCTURE_EXTENSION) && i.store.getFreeCapacity(RESOURCE_ENERGY) > 0 });
-        const roomSpawn = creep.room.find(FIND_MY_STRUCTURES, { filter: (i) => (i.structureType == STRUCTURE_SPAWN) && i.store.getFreeCapacity(RESOURCE_ENERGY) > 0 });
+        const roomBase = creep.room.find(FIND_MY_STRUCTURES, { filter: (i) => (i.structureType == STRUCTURE_EXTENSION || i.structureType == STRUCTURE_SPAWN) && i.store.getFreeCapacity(RESOURCE_ENERGY) > 0 });
         const roomTowers = creep.room.find(FIND_MY_STRUCTURES, { filter: (i) => i.structureType == STRUCTURE_TOWER && i.energy < i.energyCapacity - 200 });
         const roomTerm = creep.room.find(FIND_MY_STRUCTURES, { filter: (i) => i.structureType == STRUCTURE_TERMINAL && i.store.getFreeCapacity(RESOURCE_ENERGY) > 0 && creep.room.name != TerminalRoom });
         const roomStorage = creep.room.find(FIND_MY_STRUCTURES, { filter: (i) => i.structureType == STRUCTURE_STORAGE && i.store.getFreeCapacity(RESOURCE_ENERGY) > 0 });
-        if (roomext.length) target = roomext;
-        else if (roomSpawn.length) target = roomSpawn;
+        if (roomBase.length) target = roomBase;
         else if (roomTowers.length) target = roomTowers;
-        else if (roomTerm.length) target = roomTerm;
+        else if (roomTerm.length) {
+            var which = Math.round(Math.random())
+            if (which == 0 && roomStorage.length) target = roomStorage
+            else target = roomTerm;
+        }
         else if (roomStorage.length) target = roomStorage;
         else DX.CreepMove(creep, Game.flags[flagname]);
         target = creep.pos.findClosestByRange(target);
         if (target) {
-            DX.CreepMark(creep, target, "#00ff00", "S");
+            DX.CreepMark(creep, target, "#00ff00", "🢃");
             if (creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) DX.CreepMove(creep, target);
         }
         else DX.CreepMove(creep, Game.flags[flagname]);
@@ -101,7 +102,7 @@ module.exports = {
         var flagname = creep.room.name + "-Helper";
         const Full = creep.room.energyAvailable < creep.room.memory.minEnergy;
         if (creep.room.memory.isSpawning != "NOTHING" || Full) {
-            creep.say("🛑");
+            //creep.say("🛑");
             DX.CreepMove(creep, Game.flags[flagname]);
         }
         else {
@@ -122,20 +123,20 @@ module.exports = {
             else DX.CreepMove(creep, Game.flags.Helpers);
             target = creep.pos.findClosestByRange(target);
             if (creep.withdraw(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) DX.CreepMove(creep, target);
-            DX.CreepMark(creep, target, "#0000ff", "F");
+            DX.CreepMark(creep, target, "#0000ff", "🢁");
         }
     },
     GiveEnergy: function (creep) {
         var flagname = creep.room.name + "-Helper";
-        let foundBuilderCreeps = creep.room.find(FIND_MY_CREEPS, { filter: (i) => (i.memory.role === 'builder') && i.store[RESOURCE_ENERGY] < 50 });
-        let foundUpgraderCreeps = creep.room.find(FIND_MY_CREEPS, { filter: (i) => (i.memory.role === 'upgrader') && i.store[RESOURCE_ENERGY] < i.store.getCapacity() });
+        let foundBuilderCreeps = creep.room.find(FIND_MY_CREEPS, { filter: (i) => (i.memory.role === 'builder') });
+        let foundUpgraderCreeps = creep.room.find(FIND_MY_CREEPS, { filter: (i) => (i.memory.role === 'upgrader') });
         var target;
         foundBuilderCreeps = _.sortBy(foundBuilderCreeps, s => s.store[RESOURCE_ENERGY]);
         foundUpgraderCreeps = _.sortBy(foundUpgraderCreeps, s => s.store[RESOURCE_ENERGY]);
-        if (foundBuilderCreeps.length != 0) target = foundBuilderCreeps[0];
-        else if (creep.room.memory.ToBuild.length == 0 && foundUpgraderCreeps.length != 0) target = foundUpgraderCreeps[0];
+        if (foundBuilderCreeps.length != 0 && creep.room.memory.ToBuild.length != 0) target = foundBuilderCreeps[0];
+        else if (foundUpgraderCreeps.length != 0) target = foundUpgraderCreeps[0];
         if (target) {
-            DX.CreepMark(creep, target, "#ffaa00", "G");
+            DX.CreepMark(creep, target, "#ffaa00", "🢃");
             if (creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) DX.CreepMove(creep, target);
         }
         else DX.CreepMove(creep, Game.flags[flagname]);
@@ -152,10 +153,10 @@ module.exports = {
         var targets = _.sortBy(targets, s => s.store[RESOURCE_ENERGY]);
         if (targets.length && targets != null) {
             target = targets[0];
-            if (creep.transfer(target, RESOURCE_ENERGY, (creep.store[RESOURCE_ENERGY] - target.store[RESOURCE_ENERGY]) / 4) == ERR_NOT_IN_RANGE) DX.CreepMove(creep, target);
+            if (creep.transfer(target, RESOURCE_ENERGY, (creep.store[RESOURCE_ENERGY] - target.store[RESOURCE_ENERGY]) * 0.5) == ERR_NOT_IN_RANGE) DX.CreepMove(creep, target);
             else {
-                creep.room.visual.line(creep.pos, target.pos, { opacity: 0.8, color: 'red', width: 0.1, lineStyle: 'undefined' });
-                creep.room.visual.circle(target.pos, { opacity: 0.8, fill: 'yellow', radius: 0.2, stroke: 'blue' });
+                //creep.room.visual.line(creep.pos, target.pos, { opacity: 0.8, color: 'red', width: 0.1, lineStyle: 'undefined' });
+                //creep.room.visual.circle(target.pos, { opacity: 0.8, fill: 'yellow', radius: 0.2, stroke: 'blue' });
             }
         }
     },
@@ -228,15 +229,14 @@ module.exports = {
     //BUILDER FUNCTIONS########################################################################################################
     FindRepairs: function (spawn) {
         var repairs = [];
-        var repairs = spawn.room.find(FIND_STRUCTURES, { filter: (i) => i.hits < i.hitsMax / 2 });
+        var repairs = spawn.room.find(FIND_STRUCTURES, { filter: (i) => i.hits < i.hitsMax / 3 });
         var repairs = _.sortBy(repairs, s => s.hits);
         var repairs = _.sortBy(repairs, s => s.hits);
         spawn.room.memory.Repairables = repairs;
     },
     FindBuilds: function (spawn) {
         spawn.room.memory.ToBuild = spawn.room.memory.ToBuild || {};
-        var builds = [];
-        var builds = spawn.room.find(FIND_CONSTRUCTION_SITES);
+        var builds = spawn.room.find(FIND_CONSTRUCTION_SITES) || [];
         builds = _.sortBy(builds, s => s.progressTotal).reverse();
         spawn.room.memory.ToBuild = builds;
     },

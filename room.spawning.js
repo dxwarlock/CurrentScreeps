@@ -8,21 +8,26 @@ module.exports = {
 		var roles = _.toArray(Object.keys(spawnMem));
 		var name = spawn.room.name;
 		var creepspecs;
+		var mem;
 		for (var i in roles) {
 			var role = roles[i];
 			var creeps = _.filter(Memory.creeps, function (creep) {
 				if (creep.role && (creep.spawn == spawn.name)) return creep.role == role;
 			});
 			var totalcreeps = spawn.room.find(FIND_MY_CREEPS).length;
+			spawn.room.memory.totalcreeps = totalcreeps;
 			if ((panic.harvester < 1 || panic.harvester == undefined) && totalcreeps == 0) {
-				role = 'harvester', creepspecs = [WORK, CARRY, MOVE];
+				mem = { memory: { 'type': 'panic', 'role': 'harvester', 'room': name, 'spawn': spawn.name } }
+				creepspecs = [WORK, CARRY, MOVE];
 				break;
 			}
-			else if ((panic.carry < 1 || panic.carry == undefined) && totalcreeps == 0) {
-				role = 'carry', creepspecs = [CARRY, CARRY, MOVE];
+			else if ((panic.carry < 1 || panic.carry == undefined)) {
+				mem = { memory: { 'type': 'panic', 'role': 'carry', 'room': name, 'spawn': spawn.name } }
+				creepspecs = [CARRY, CARRY, MOVE];
 				break;
 			}
 			else if (creeps.length < spawnMem[role]) {
+				mem = { memory: { 'type': 'norm', 'role': role, 'room': name, 'spawn': spawn.name } }
 				creepspecs = spawn.room.memory.creepSpecs[role];
 				break;
 			}
@@ -36,7 +41,7 @@ module.exports = {
 			spawningText = title;
 			var room = spawn.room.name;
 			spawn.room.memory.isSpawning = title;
-			spawn.spawnCreep(creepspecs, title, { memory: { 'role': role, 'room': room, 'spawn': spawn.name } })
+			spawn.spawnCreep(creepspecs, title, mem)
 		}
 		else spawn.room.memory.isSpawning = "NOTHING";
 		spawn.room.memory.cost = totalCost;

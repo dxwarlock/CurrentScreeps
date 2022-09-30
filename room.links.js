@@ -11,7 +11,7 @@ module.exports = {
             else senders.push(targLink);
         }
         for (var i in senders) {
-            if (senders[i].store[RESOURCE_ENERGY] > 100) senders[i].transferEnergy(receiver[0]);
+            if (senders[i].store[RESOURCE_ENERGY] > 50) senders[i].transferEnergy(receiver[0]);
         }
     }
 }

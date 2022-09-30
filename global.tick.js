@@ -32,7 +32,9 @@ module.exports = {
         for (var name in Game.creeps) {
             var creep = Game.creeps[name];
             //creep.suicide();
-            if (creep.ticksToLive < 50) creep.say('💀')
+            totalcreeps = creep.room.memory.totalcreeps;
+            if (creep.ticksToLive < 20) creep.say('💀')
+            if (creep.memory.type == 'panic' && creep.memory.role == 'harvester' && totalcreeps > 5) creep.suicide();
             if (creep.memory.role == 'carry') rolecarry.run(creep);
             if (creep.memory.role == 'helper') rolehelper.run(creep);
             if (creep.memory.role == 'harvester') roleharvester.run(creep);
