@@ -1,5 +1,5 @@
 module.exports = {
-    run: function (creep) {
+    run(creep) {
         DX.MineEnergy(creep);
     }
 };

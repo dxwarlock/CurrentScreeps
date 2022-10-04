@@ -1,12 +1,19 @@
 module.exports = {
-    run: function (creep) {
+    run(creep) {
+        //DX.CreepMove(creep, Game.flags[creep.memory.flag]);
         creep.signController(creep.room.controller, "Brought to you by DX!")
-        if (creep.pos.getRangeTo(creep.room.controller) > 1) {
-            DX.CreepMove(creep, creep.room.controller);
+        const controlContainer = creep.room.find(FIND_STRUCTURES, { filter: (i) => i.structureType == STRUCTURE_CONTAINER && i.pos.inRangeTo(creep.room.controller, 3) });
+        if (creep.store[RESOURCE_ENERGY] == 0 && controlContainer.length) {
+            target = controlContainer[0];
+            if (creep.withdraw(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) DX.CreepMove(creep, target);
         }
         else {
-            creep.upgradeController(creep.room.controller);
             DX.ShareEnergy(creep);
+            if (creep.upgradeController(creep.room.controller) == ERR_NOT_ENOUGH_RESOURCES) DX.CreepMove(creep, Game.flags[creep.memory.flag]);
+            else if (creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) DX.CreepMove(creep, creep.room.controller);
+            else creep.upgradeController(creep.room.controller);
+
+
         }
     }
 };

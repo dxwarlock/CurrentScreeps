@@ -1,5 +1,5 @@
 module.exports = {
-    run: function (spawn) {
+    run(spawn) {
         var receiver = [];
         var senders = [];
         var link = spawn.room.find(FIND_STRUCTURES, { filter: (i) => i.structureType == STRUCTURE_LINK });
@@ -11,7 +11,7 @@ module.exports = {
             else senders.push(targLink);
         }
         for (var i in senders) {
-            if (senders[i].store[RESOURCE_ENERGY] > 50) senders[i].transferEnergy(receiver[0]);
+            if (senders[i].store[RESOURCE_ENERGY] >= 100) senders[i].transferEnergy(receiver[0]);
         }
     }
 }

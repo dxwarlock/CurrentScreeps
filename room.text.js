@@ -1,5 +1,5 @@
 module.exports = {
-    run: function (spawn) {
+    run(spawn) {
         var roomName = spawn.room.name;
         var x = 1, y = 1;
         var spawningCreep = [];

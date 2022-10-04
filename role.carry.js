@@ -1,5 +1,5 @@
 module.exports = {
-	run: function (creep) {
+	run(creep) {
 		//DX.ShareEnergy(creep);
 		const target = creep.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
 		if (target) {

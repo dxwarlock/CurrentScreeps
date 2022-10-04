@@ -1,6 +1,6 @@
 var roomtext = require('room.text');
 module.exports = {
-	SpawnStuff: function (spawn) {
+	SpawnStuff(spawn) {
 		var spawningText = "NOTHING";
 		var totalCost = 0;
 		var spawnMem = spawn.room.memory.Population;
@@ -39,9 +39,8 @@ module.exports = {
 			var suffixn = '-' + Math.round(Game.time / 5);
 			var title = base.concat(suffixn.toString());
 			spawningText = title;
-			var room = spawn.room.name;
 			spawn.room.memory.isSpawning = title;
-			spawn.spawnCreep(creepspecs, title, mem)
+			spawn.spawnCreep(creepspecs, title, mem);
 		}
 		else spawn.room.memory.isSpawning = "NOTHING";
 		spawn.room.memory.cost = totalCost;
