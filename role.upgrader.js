@@ -9,7 +9,7 @@ module.exports = {
         }
         else {
             DX.ShareEnergy(creep);
-            if (creep.upgradeController(creep.room.controller) == ERR_NOT_ENOUGH_RESOURCES) DX.CreepMove(creep, Game.flags[creep.memory.flag]);
+            if (creep.upgradeController(creep.room.controller) == ERR_NOT_ENOUGH_RESOURCES) DX.CreepMove(creep, creep.room.controller);
             else if (creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) DX.CreepMove(creep, creep.room.controller);
             else creep.upgradeController(creep.room.controller);
 

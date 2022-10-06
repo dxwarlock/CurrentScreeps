@@ -23,8 +23,6 @@ module.exports = {
                     if (roomStorage.length != 0 && thisRoomTerm.store.energy > 1000 && thisRoomTerm.room.name != targetRoomTerm.room.name && targetRoomTerm.room.energyAvailable < targetRoomTerm.room.energyCapacityAvailable) {
                         if (thisRoomTerm.cooldown == 0) {
                             thisRoomTerm.send(RESOURCE_ENERGY, 500, targetRoomTerm.room.name);
-                            //console.log(thisRoomTerm.room.name + ' -> ' + targetRoomTerm.room.name + ' ' + targetRoomTerm.room.energyAvailable + '/' + targetRoomTerm.room.energyCapacityAvailable)
-                            //console.log('-------------------')
                         }
                     }
                 }

@@ -17,17 +17,17 @@ module.exports = {
 			var totalcreeps = spawn.room.find(FIND_MY_CREEPS).length;
 			spawn.room.memory.totalcreeps = totalcreeps;
 			if ((panic.harvester < 1 || panic.harvester == undefined) && totalcreeps == 0) {
-				mem = { memory: { 'type': 'panic', 'role': 'harvester', 'room': name, 'spawn': spawn.name } }
+				mem = { memory: { 'type': 'panic', 'role': 'harvester', 'room': name, 'spawn': spawn.name, 'flag': (spawn.room.name + '-harvester').toUpperCase() } }
 				creepspecs = [WORK, CARRY, MOVE];
 				break;
 			}
 			else if ((panic.carry < 1 || panic.carry == undefined)) {
-				mem = { memory: { 'type': 'panic', 'role': 'carry', 'room': name, 'spawn': spawn.name } }
+				mem = { memory: { 'type': 'panic', 'role': 'carry', 'room': name, 'spawn': spawn.name, 'flag': (spawn.room.name + '-carry').toUpperCase() } }
 				creepspecs = [CARRY, CARRY, MOVE];
 				break;
 			}
 			else if (creeps.length < spawnMem[role]) {
-				mem = { memory: { 'type': 'norm', 'role': role, 'room': name, 'spawn': spawn.name } }
+				mem = { memory: { 'type': 'norm', 'role': role, 'room': name, 'spawn': spawn.name, 'flag': (spawn.room.name + '-' + role).toUpperCase() } }
 				creepspecs = spawn.room.memory.creepSpecs[role];
 				break;
 			}

@@ -45,13 +45,12 @@ module.exports.loop = function () {
 		DX.FindBuilds(spawn);
 	}
 	for (var name in Game.creeps) {
-		var creep = Game.creeps[name];
-		creep.memory.flag = (creep.room.name + '-' + creep.memory.role).toUpperCase();
+		var creep = Game.creeps[name];		
 		//creep.suicide();
 		if (creep.ticksToLive < 20) creep.say('💀');
 		if (creep.memory.type == 'panic' && creep.memory.role == 'harvester' && creep.room.memory.totalcreeps > 7) creep.suicide();
 		var runRole = creep.memory.role;
-		if(runRole) eval(runRole).run(creep);
+		if (runRole) eval(runRole).run(creep);
 		else creep.suicide();
 	}
 }

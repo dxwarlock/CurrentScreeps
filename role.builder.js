@@ -20,7 +20,7 @@ module.exports = {
             target = targets[0];
             if (target != undefined) {
                 DX.CreepMark(creep, target, "#ff00ff", "BUILD " + target.progress + "/" + target.progressTotal);
-                if (creep.pos.getRangeTo(target) > 3) DX.CreepMove(creep, target);
+                if (creep.pos.getRangeTo(target) > 1) DX.CreepMove(creep, target);
                 else {
                     creep.build(target);
                     DX.ShareEnergy(creep);

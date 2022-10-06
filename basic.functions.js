@@ -58,7 +58,7 @@ module.exports = {
         else if (notFull == true && (roomLinks.length != 0 || roomStorage.length != 0)) {
             if (roomLinks.length != 0) creep.memory.target = roomLinks[0];
             else if (roomStorage.length != 0) creep.memory.target = roomStorage[0];
-            else DX.CreepMove(creep, Game.flags[flagname]);
+            else DX.CreepMove(creep, Game.flags[creep.memory.flag]);
         }
         else if (roomLinks.length != 0) {
 
@@ -70,9 +70,9 @@ module.exports = {
         else if (roomContainers.length != 0) {
             target = _.sortBy(roomContainers, s => s.store[RESOURCE_ENERGY]).reverse();
             ranTarget = Math.floor(Math.random() * target.length);
-            creep.memory.target = target[ranTarget];
+            creep.memory.target = target[0];
         }
-        else DX.CreepMove(creep, Game.flags[flagname]);
+        else DX.CreepMove(creep, Game.flags[creep.memory.flag]);
     },
     storeEnergy(creep) {
         var target;
@@ -85,14 +85,14 @@ module.exports = {
         else if (roomTowers.length) target = roomTowers;
         else if (roomStorage.length) target = roomStorage;
         else if (roomTerm.length) target = roomTerm;
-        else DX.CreepMove(creep, Game.flags[flagname]);
+        else DX.CreepMove(creep, Game.flags[creep.memory.flag]);
         //------------
         target = creep.pos.findClosestByRange(target);
         if (target) {
             DX.CreepMark(creep, target, "#00ff00", "🢃");
             if (creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) DX.CreepMove(creep, target);
         }
-        else DX.CreepMove(creep, Game.flags[flagname]);
+        else DX.CreepMove(creep, Game.flags[creep.memory.flag]);
     },
     //HELPER ENERGY FUNCTIONS########################################################################################################
     getEnergy(creep) {
@@ -100,7 +100,7 @@ module.exports = {
         const Full = creep.room.energyAvailable < creep.room.memory.minEnergy;
         if (creep.room.memory.isSpawning != "NOTHING" || Full) {
             //creep.say("🛑");
-            DX.CreepMove(creep, Game.flags[flagname]);
+            DX.CreepMove(creep, Game.flags[creep.memory.flag]);
         }
         else {
             var target;
@@ -125,12 +125,12 @@ module.exports = {
     },
     GiveEnergy(creep) {
         var flagname = creep.room.name + "-HELPER";
-        let foundBuilderCreeps = creep.room.find(FIND_MY_CREEPS, { filter: (i) => (i.memory.role === 'builder') });
+        let foundBuilderCreeps = creep.room.find(FIND_MY_CREEPS, { filter: (i) => (i.memory.role === 'builder' && i.store.getFreeCapacity(RESOURCE_ENERGY) > 0) });
         let foundUpgraderCreeps = creep.room.find(FIND_MY_CREEPS, { filter: (i) => (i.memory.role === 'upgrader') });
         var target;
         foundBuilderCreeps = _.sortBy(foundBuilderCreeps, s => s.store[RESOURCE_ENERGY]);
         foundUpgraderCreeps = _.sortBy(foundUpgraderCreeps, s => s.store[RESOURCE_ENERGY]);
-        if (foundBuilderCreeps.length != 0 && foundBuilderCreeps[0].store[RESOURCE_ENERGY] == 0) target = foundBuilderCreeps[0];
+        if (foundBuilderCreeps.length != 0) target = foundBuilderCreeps[0];
         else if (foundUpgraderCreeps.length != 0) {
             const controlContainer = creep.room.find(FIND_STRUCTURES, { filter: (i) => i.structureType == STRUCTURE_CONTAINER && i.store.getFreeCapacity(RESOURCE_ENERGY) > 0 && i.pos.inRangeTo(creep.room.controller, 5) });
             if (controlContainer.length != 0) target = controlContainer[0];
@@ -144,11 +144,11 @@ module.exports = {
     },
     //SHARE TO OTHERS LIKE YOU-------------------------------------------------------------
     ShareEnergy(creep) {
-        var targets = creep.pos.findInRange(FIND_MY_CREEPS, 6, { filter: (i) => i.memory.role == creep.memory.role && i.store[RESOURCE_ENERGY] < creep.store[RESOURCE_ENERGY] })
+        var targets = creep.pos.findInRange(FIND_MY_CREEPS, 1, { filter: (i) => i.memory.role == creep.memory.role && i.store[RESOURCE_ENERGY] < creep.store[RESOURCE_ENERGY] })
         var targets = _.sortBy(targets, s => s.store[RESOURCE_ENERGY]);
         if (targets.length && targets != null) {
             target = targets[0];
-            if (creep.transfer(target, RESOURCE_ENERGY, creep.store[RESOURCE_ENERGY] * 0.25) == ERR_NOT_IN_RANGE) DX.CreepMove(creep, target);
+            if (creep.transfer(target, RESOURCE_ENERGY, creep.store[RESOURCE_ENERGY] * 0.1) == ERR_NOT_IN_RANGE) DX.CreepMove(creep, target);
         }
     },
     //MINING FUNCTIONS########################################################################################################

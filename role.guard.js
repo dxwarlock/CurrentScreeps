@@ -1,13 +1,18 @@
 module.exports = {
     run(creep) {
-        var roomname = creep.memory.room + "-Guard";
         const ctarget = creep.room.find(FIND_HOSTILE_CREEPS);
         const starget = creep.pos.findClosestByRange(FIND_HOSTILE_STRUCTURES);
         var firstList = [];
         var secondList = [];
         var target;
-        if (Game.flags.Attack) {
-            if (creep.room != Game.flags.Attack.room) DX.CreepMove(creep, Game.flags.Attack);
+        if (Game.flags.Stage) DX.CreepMove(creep, Game.flags.Stage);
+        if (Game.flags.Attack) if (creep.room != Game.flags.Attack.room) DX.CreepMove(creep, Game.flags.Attack);
+
+        var woundedCreeps = creep.room.find(FIND_MY_CREEPS, { filter: (c) => c.hits < c.hitsMax });
+        if (woundedCreeps.length > 0) {
+            target = _.sortBy(woundedCreeps, s => s.hits);
+            target = woundedCreeps[0];
+            creep.heal(target);
         }
         else if (ctarget.length != 0) {
             for (var i in ctarget) {
@@ -27,6 +32,6 @@ module.exports = {
                 DX.CreepMove(creep, starget);
             }
         }
-        else if (Game.flags[roomname]) DX.CreepMove(creep, Game.flags[roomname]);
+        else if (Game.flags[creep.memory.flag]) DX.CreepMove(creep, Game.flags[creep.memory.flag]);
     }
 };

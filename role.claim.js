@@ -1,7 +1,7 @@
 module.exports = {
     run(creep) {
         //creep.say("📣");
-        if(!Game.flags.Claim) DX.CreepMove(creep, Game.flags.Claimer)
+        if (!Game.flags.Claim) DX.CreepMove(creep, Game.flags[creep.memory.flag]);
         else if (creep.room != Game.flags.Claim.room) DX.CreepMove(creep, Game.flags.Claim);
         else {
             if (creep.room.controller.my != true) {
