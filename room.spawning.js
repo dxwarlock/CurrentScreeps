@@ -34,7 +34,7 @@ module.exports = {
 		}
 		//build creeps----------------
 		if (creepspecs != undefined) {
-			totalCost = DX.FindCost(spawn, role);
+			totalCost = DX.FindCost(creepspecs);
 			var base = name + '-' + role.toUpperCase();
 			var suffixn = '-' + Math.round(Game.time / 5);
 			var title = base.concat(suffixn.toString());

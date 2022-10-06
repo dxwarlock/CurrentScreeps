@@ -244,18 +244,18 @@ module.exports = {
     getRandomNumber(min, max) {
         return Math.floor(Math.random() * (max - min + 1)) + min;
     },
-    FindCost(spawn, role) {
+    FindCost(role) {
         var totalCost = 0;
-        for (var i in spawn.room.memory.creepSpecs[role]) {
-            var Part = spawn.room.memory.creepSpecs[role][i];
+        for (var i in role) {
+            var Part = role[i];
             if (Part == MOVE) totalCost += 50;
-            else if (Part == CLAIM) totalCost += 600;
-            else if (Part == HEAL) totalCost += 250;
-            else if (Part == RANGED_ATTACK) totalCost += 150;
-            else if (Part == WORK) totalCost += 100;
-            else if (Part == ATTACK) totalCost += 80;
             else if (Part == CARRY) totalCost += 50;
+            else if (Part == WORK) totalCost += 100;
             else if (Part == TOUGH) totalCost += 10;
+            else if (Part == ATTACK) totalCost += 80;
+            else if (Part == RANGED_ATTACK) totalCost += 150;
+            else if (Part == HEAL) totalCost += 250;
+            else if (Part == CLAIM) totalCost += 600;
         }
         return totalCost;
     },

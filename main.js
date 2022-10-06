@@ -12,6 +12,7 @@ Memory.pathcolor.helper = "#ffff00"
 Memory.pathcolor.carry = "#00ff00"
 Memory.pathcolor.guard = "#ff0000"
 Memory.pathcolor.claim = "#ffaa22"
+Memory.pathcolor.heal = "#22ffff"
 //OTHER ROLES#####################
 var specs = require('room.setspecs');
 var spawning = require('room.spawning');
@@ -24,7 +25,8 @@ var upgrader = require('role.upgrader');
 var builder = require('role.builder');
 var helper = require('role.helper');
 var carry = require('role.carry');
-var guard = require('role.guard');
+var guard = require('role.at-guard');
+var heal = require('role.at-heal');
 var claim = require('role.claim');
 //#####################
 module.exports.loop = function () {
@@ -45,7 +47,7 @@ module.exports.loop = function () {
 		DX.FindBuilds(spawn);
 	}
 	for (var name in Game.creeps) {
-		var creep = Game.creeps[name];		
+		var creep = Game.creeps[name];
 		//creep.suicide();
 		if (creep.ticksToLive < 20) creep.say('💀');
 		if (creep.memory.type == 'panic' && creep.memory.role == 'harvester' && creep.room.memory.totalcreeps > 7) creep.suicide();

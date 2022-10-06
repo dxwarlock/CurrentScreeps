@@ -11,10 +11,10 @@ module.exports = {
             var i = `${property}: ${roomCreepCount[property]}`
             roomCreepText = roomCreepText.concat(" " + i)
         }
-        var textsize = 0.6;
+        var textsize = 0.4;
         var contollerLevel = (spawn.room.find(FIND_MY_STRUCTURES, { filter: (i) => i.structureType == STRUCTURE_CONTROLLER }));
-        var textFormatTop = { align: 'left', color: "#FFE400", font: 'bold ' + textsize + ' Arial', stroke: '#000000', backgroundPadding: 0.2, backgroundColor: '#223300', opacity: 0.9 };
-        var textFormat2 = { align: 'left', color: "#ffffff", font: 'bold 0.5 Arial', stroke: '#000000', backgroundPadding: 0.2, backgroundColor: 'transparent', opacity: 0.9 };
+        var textFormatTop = { align: 'left', color: "#FFE400", font: 'bold ' + textsize + ' Arial', stroke: '#000000', backgroundPadding: 0.2, backgroundColor: '#223300', opacity: 0.5 };
+        var textFormat2 = { align: 'left', color: "#ffffff", font: 'bold 0.4 Arial', stroke: '#000000', backgroundPadding: 0.2, backgroundColor: 'transparent', opacity: 0.5 };
         var roomPower = spawn.room.energyAvailable + "/" + spawn.room.energyCapacityAvailable;
         if (spawn.spawning) var spawningCreep = Game.creeps[spawn.spawning.name];
         //TOP TEXT
